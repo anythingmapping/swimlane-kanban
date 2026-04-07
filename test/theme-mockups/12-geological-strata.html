@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Theme 12: Geological Strata</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Rajdhani', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    background: #0A0808;
+    color: #C8C0B8;
+    min-height: 100vh;
+  }
+  .theme-label {
+    text-align: center; padding: 18px;
+    font-size: 1.2em; font-weight: 600;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    color: #D4C8A8;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.6);
+    background: #080606;
+    border-bottom: 2px solid #2A2420;
+  }
+  .board { display: flex; flex-direction: column; gap: 24px; padding: 24px 20px; }
+
+  /* Each swimlane is a geological stratum with a unique texture */
+  .swimlane {
+    border: 1px solid #2A2420;
+    border-top: 3px solid var(--accent);
+    border-radius: 3px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.5);
+    overflow: hidden;
+  }
+  /* Cretaceous — chalky limestone texture */
+  .swimlane:nth-child(1) {
+    background:
+      repeating-linear-gradient(0deg,
+        transparent, transparent 3px,
+        rgba(212,200,168,0.03) 3px, rgba(212,200,168,0.03) 4px),
+      repeating-linear-gradient(90deg,
+        transparent, transparent 7px,
+        rgba(212,200,168,0.02) 7px, rgba(212,200,168,0.02) 8px),
+      #100E0C;
+  }
+  /* Jurassic — darker sedimentary grey texture */
+  .swimlane:nth-child(2) {
+    background:
+      repeating-linear-gradient(2deg,
+        transparent, transparent 5px,
+        rgba(138,138,144,0.04) 5px, rgba(138,138,144,0.04) 6px),
+      repeating-linear-gradient(178deg,
+        transparent, transparent 11px,
+        rgba(138,138,144,0.03) 11px, rgba(138,138,144,0.03) 12px),
+      #0E0C0C;
+  }
+  /* Cambrian — deep obsidian with quartz veins */
+  .swimlane:nth-child(3) {
+    background:
+      repeating-linear-gradient(-3deg,
+        transparent, transparent 14px,
+        rgba(200,136,154,0.04) 14px, rgba(200,136,154,0.04) 15px),
+      repeating-linear-gradient(87deg,
+        transparent, transparent 20px,
+        rgba(200,136,154,0.02) 20px, rgba(200,136,154,0.02) 21px),
+      #0C0A0A;
+  }
+
+  .swimlane-header {
+    display: flex; align-items: center; gap: 8px;
+    padding: 10px 14px;
+    background: rgba(8,6,6,0.9);
+    border-bottom: 1px solid #2A2420;
+  }
+  .swimlane-title {
+    flex: 1;
+    font-weight: 600; font-size: 0.88em;
+    text-transform: uppercase; letter-spacing: 0.12em;
+    color: var(--accent);
+  }
+  .badge {
+    font-size: 0.75em; font-weight: 600;
+    padding: 2px 7px; border-radius: 3px;
+    background: #080606; border: 1px solid #2A2420;
+    color: #A0988A;
+  }
+  .btn {
+    font-size: 0.72em; font-weight: 600;
+    padding: 2px 8px; border-radius: 3px;
+    letter-spacing: 0.06em; text-transform: uppercase;
+    cursor: pointer; border-width: 1px; border-style: solid;
+    line-height: 1.6;
+    font-family: 'Rajdhani', sans-serif;
+  }
+  .btn-danger { background: #140808; border-color: #AA4444; color: #CC6666; }
+  .btn-warn { background: #141008; border-color: #8B7355; color: #B8A080; }
+  .btn-ok { background: #0A1208; border-color: #6A8A5A; color: #8AAA7A; }
+
+  .columns { display: flex; gap: 10px; padding: 10px 12px 16px; }
+
+  .column {
+    flex: 0 0 260px; min-width: 260px;
+    display: flex; flex-direction: column;
+    background: #141210;
+    border: 1px solid #2A2420;
+    border-top: 3px solid var(--accent);
+    border-radius: 3px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.35);
+  }
+  .column-header {
+    padding: 9px 12px 7px;
+    border-bottom: 1px solid #221E1A;
+    background: #0C0A08;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .column-title {
+    font-size: 0.78em; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.08em;
+    color: #A0988A;
+  }
+  .wip-badge {
+    font-size: 0.72em; font-weight: 600;
+    padding: 2px 6px; border-radius: 3px;
+    background: #080606; border: 1px solid #2A2420;
+    color: #A0988A;
+  }
+  .wip-bar { height: 3px; background: #221E1A; margin: 0 12px; border-radius: 1px; overflow: hidden; }
+  .wip-fill { height: 100%; border-radius: 1px; background: linear-gradient(90deg, #D4C8A8, #C8889A); }
+
+  .card-list { display: flex; flex-direction: column; gap: 5px; padding: 8px 7px; }
+
+  /* Cards as embedded fossils — inset with inner shadows */
+  .card {
+    padding: 9px 10px;
+    background: color-mix(in srgb, var(--accent) 8%, #121010);
+    border: 1px solid color-mix(in srgb, var(--accent) 12%, #2A2420);
+    border-left: 3px solid color-mix(in srgb, var(--accent) 35%, #2A2420);
+    border-radius: 2px;
+    box-shadow:
+      inset 0 1px 4px rgba(0,0,0,0.4),
+      inset 0 -1px 2px rgba(0,0,0,0.2),
+      0 1px 2px rgba(0,0,0,0.2);
+    display: flex; align-items: flex-start; gap: 7px;
+    font-size: 0.9em; line-height: 1.45;
+    position: relative;
+    transition: all 0.15s ease;
+  }
+  .card:hover {
+    background: color-mix(in srgb, var(--accent) 14%, #161412);
+    border-color: color-mix(in srgb, var(--accent) 25%, #2A2420);
+    box-shadow:
+      inset 0 1px 4px rgba(0,0,0,0.35),
+      inset 0 -1px 2px rgba(0,0,0,0.15),
+      0 2px 8px rgba(0,0,0,0.3);
+    transform: translateY(-1px);
+  }
+  .card-project { border-left: 3px solid var(--accent); }
+  .card-title { flex: 1; }
+  /* Score as polished mineral specimen */
+  .score {
+    width: 26px; height: 26px; border-radius: 4px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.7em; font-weight: 700;
+    background: linear-gradient(145deg, #1A1816, #0E0C0A);
+    border: 1px solid color-mix(in srgb, var(--accent) 25%, #2A2420);
+    color: var(--accent); flex-shrink: 0;
+    box-shadow:
+      inset 0 1px 2px rgba(255,255,255,0.05),
+      0 1px 3px rgba(0,0,0,0.3);
+  }
+  input[type="checkbox"] { margin-top: 2px; flex-shrink: 0; accent-color: #D4C8A8; }
+
+  .card-form {
+    padding: 5px 7px 8px;
+    border-top: 1px solid #221E1A;
+    background: #0C0A08;
+  }
+  .card-input {
+    width: 100%; padding: 6px 10px; font-size: 0.88em;
+    background: #0A0808; color: #C8C0B8;
+    border: 1px solid #2A2420; border-radius: 2px;
+    outline: none; font-family: 'Rajdhani', sans-serif;
+  }
+  .card-input:focus { border-color: #D4C8A8; box-shadow: 0 0 0 2px rgba(212,200,168,0.12); }
+  .card-input::placeholder { color: #2A2420; }
+</style>
+</head>
+<body>
+<div class="theme-label">Theme 12 — Geological Strata</div>
+<div class="board">
+
+  <div class="swimlane" style="--accent: #D4C8A8;">
+    <div class="swimlane-header">
+      <span class="swimlane-title">Cretaceous — Features</span>
+      <span class="btn btn-ok">unclear</span>
+      <span class="btn btn-warn">clear</span>
+      <span class="badge">6</span>
+    </div>
+    <div class="columns">
+      <div class="column" style="--accent: #D4C8A8;">
+        <div class="column-header"><span class="column-title">Backlog</span><span class="wip-badge">3/5</span></div>
+        <div class="wip-bar"><div class="wip-fill" style="width: 60%"></div></div>
+        <div class="card-list">
+          <div class="card"><input type="checkbox"><span class="card-title">Refactor auth middleware</span><span class="score">7</span></div>
+          <div class="card card-project"><input type="checkbox"><span class="card-title">Implement SSO integration</span><span class="score">9</span></div>
+          <div class="card"><input type="checkbox"><span class="card-title">Update API rate limiter</span><span class="score">4</span></div>
+        </div>
+        <div class="card-form"><input class="card-input" placeholder="+ Add card..."></div>
+      </div>
+      <div class="column" style="--accent: #D4C8A8;">
+        <div class="column-header"><span class="column-title">In Progress</span><span class="wip-badge">2/3</span></div>
+        <div class="wip-bar"><div class="wip-fill" style="width: 66%"></div></div>
+        <div class="card-list">
+          <div class="card"><input type="checkbox"><span class="card-title">Database migration script</span><span class="score">6</span></div>
+          <div class="card card-project"><input type="checkbox"><span class="card-title">WebSocket event handlers</span><span class="score">8</span></div>
+        </div>
+      </div>
+      <div class="column" style="--accent: #D4C8A8;">
+        <div class="column-header"><span class="column-title">Done</span></div>
+        <div class="card-list">
+          <div class="card" style="opacity: 0.4;"><input type="checkbox" checked><span class="card-title" style="text-decoration: line-through; color: #2A2420;">Setup CI pipeline</span><span class="score">3</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="swimlane" style="--accent: #8A8A90;">
+    <div class="swimlane-header">
+      <span class="swimlane-title">Jurassic — Research</span>
+      <span class="badge">3</span>
+    </div>
+    <div class="columns">
+      <div class="column" style="--accent: #8A8A90;">
+        <div class="column-header"><span class="column-title">Exploring</span></div>
+        <div class="card-list">
+          <div class="card"><input type="checkbox"><span class="card-title">Evaluate edge runtime options</span><span class="score">6</span></div>
+          <div class="card card-project"><input type="checkbox"><span class="card-title">Benchmark serialization libs</span><span class="score">4</span></div>
+        </div>
+      </div>
+      <div class="column" style="--accent: #8A8A90;">
+        <div class="column-header"><span class="column-title">Decided</span></div>
+        <div class="card-list">
+          <div class="card"><input type="checkbox"><span class="card-title">Go with Bun for tooling</span><span class="score">7</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="swimlane" style="--accent: #C8889A;">
+    <div class="swimlane-header">
+      <span class="swimlane-title">Cambrian — Foundation</span>
+      <span class="btn btn-danger">reload</span>
+      <span class="badge">2</span>
+    </div>
+    <div class="columns">
+      <div class="column" style="--accent: #C8889A;">
+        <div class="column-header"><span class="column-title">Critical</span></div>
+        <div class="card-list">
+          <div class="card"><input type="checkbox"><span class="card-title">Fix production memory leak</span><span class="score">9</span></div>
+          <div class="card card-project"><input type="checkbox"><span class="card-title">Patch CVE-2026-1234</span><span class="score">10</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

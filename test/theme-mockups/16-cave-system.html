@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Theme 16 — Cave System</title>
+<style>
+  :root {
+    --bg: #060608;
+    --bio-cyan: #00E5CC;
+    --crystal-purple: #9966DD;
+    --cave-moss: #558844;
+    --stone-grey: #6A6A70;
+    --accent: #00E5CC;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: #B0B0B8;
+    min-height: 100vh;
+    padding: 2rem;
+  }
+
+  h1 {
+    text-align: center;
+    font-size: 1.6rem;
+    font-weight: 600;
+    color: var(--bio-cyan);
+    margin-bottom: 2rem;
+    text-shadow: 0 0 20px color-mix(in srgb, var(--bio-cyan) 30%, transparent);
+  }
+
+  .board {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .swimlane {
+    position: relative;
+    background: color-mix(in srgb, var(--stone-grey) 6%, var(--bg));
+    border: 1px solid color-mix(in srgb, var(--stone-grey) 15%, transparent);
+    border-radius: 0 0 8px 8px;
+    padding: 2.5rem 1rem 1rem;
+    clip-path: polygon(
+      0% 5%, 3% 2%, 5% 4.5%, 7% 1%, 10% 3%, 12% 0.5%, 15% 4%,
+      17% 2%, 19% 5%, 21% 1.5%, 24% 3.5%, 26% 0%, 28% 4.5%,
+      31% 1%, 33% 3%, 36% 0.5%, 38% 5%, 40% 2%, 43% 4%,
+      45% 0.5%, 48% 3.5%, 50% 1%, 52% 4.5%, 55% 2%, 57% 0%,
+      60% 3.5%, 62% 5%, 64% 1.5%, 67% 4%, 69% 0.5%, 72% 3%,
+      74% 5%, 76% 1%, 79% 3.5%, 81% 0%, 84% 4.5%, 86% 2%,
+      88% 5%, 90% 1.5%, 93% 3%, 95% 0.5%, 97% 4%, 100% 2%,
+      100% 100%, 0% 100%
+    );
+  }
+
+  .swimlane-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--bio-cyan);
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid color-mix(in srgb, var(--bio-cyan) 15%, transparent);
+    text-shadow: 0 0 8px color-mix(in srgb, var(--bio-cyan) 20%, transparent);
+  }
+
+  .swimlane:nth-child(2) .swimlane-title {
+    color: var(--crystal-purple);
+    border-bottom-color: color-mix(in srgb, var(--crystal-purple) 15%, transparent);
+    text-shadow: 0 0 8px color-mix(in srgb, var(--crystal-purple) 20%, transparent);
+  }
+
+  .swimlane:nth-child(3) .swimlane-title {
+    color: var(--cave-moss);
+    border-bottom-color: color-mix(in srgb, var(--cave-moss) 15%, transparent);
+    text-shadow: 0 0 8px color-mix(in srgb, var(--cave-moss) 20%, transparent);
+  }
+
+  .columns {
+    display: flex;
+    gap: 1rem;
+  }
+
+  .column {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .column-header {
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--stone-grey);
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px dashed color-mix(in srgb, var(--stone-grey) 15%, transparent);
+    position: relative;
+    text-align: center;
+  }
+
+  .column-header::after {
+    content: "";
+    position: absolute;
+    bottom: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-top: 8px solid color-mix(in srgb, var(--stone-grey) 20%, transparent);
+  }
+
+  .column-header::before {
+    content: "";
+    position: absolute;
+    bottom: -14px;
+    left: 30%;
+    width: 0;
+    height: 0;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 6px solid color-mix(in srgb, var(--stone-grey) 12%, transparent);
+  }
+
+  .cards {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+  }
+
+  .card {
+    background: color-mix(in srgb, var(--accent) 5%, var(--bg));
+    border: 1px solid color-mix(in srgb, var(--accent) 15%, transparent);
+    border-radius: 5px;
+    padding: 0.6rem 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: box-shadow 0.3s;
+    box-shadow: inset 0 0 12px color-mix(in srgb, var(--accent) 6%, transparent);
+  }
+
+  .card:hover {
+    box-shadow:
+      inset 0 0 20px color-mix(in srgb, var(--accent) 12%, transparent),
+      0 0 12px color-mix(in srgb, var(--accent) 10%, transparent);
+  }
+
+  .card input[type="checkbox"] {
+    appearance: none;
+    width: 14px;
+    height: 14px;
+    border: 1.5px solid color-mix(in srgb, var(--stone-grey) 50%, transparent);
+    border-radius: 3px;
+    flex-shrink: 0;
+    cursor: pointer;
+    position: relative;
+  }
+
+  .card input[type="checkbox"]:checked {
+    background: color-mix(in srgb, var(--bio-cyan) 50%, transparent);
+    border-color: var(--bio-cyan);
+    box-shadow: 0 0 6px color-mix(in srgb, var(--bio-cyan) 30%, transparent);
+  }
+
+  .card input[type="checkbox"]:checked::after {
+    content: "\2713";
+    position: absolute;
+    top: -2px;
+    left: 1px;
+    font-size: 11px;
+    color: var(--bg);
+  }
+
+  .card-title {
+    flex: 1;
+    font-size: 0.85rem;
+    color: #B0B0B8;
+    line-height: 1.3;
+  }
+
+  .card.done .card-title {
+    text-decoration: line-through;
+    opacity: 0.6;
+  }
+
+  .score {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    font-weight: 700;
+    flex-shrink: 0;
+    background: color-mix(in srgb, var(--accent) 10%, transparent);
+    color: var(--accent);
+    border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+    box-shadow: 0 0 8px color-mix(in srgb, var(--accent) 20%, transparent);
+    text-shadow: 0 0 4px color-mix(in srgb, var(--accent) 40%, transparent);
+  }
+</style>
+</head>
+<body>
+
+<h1>Theme 16 — Cave System</h1>
+
+<div class="board">
+
+  <!-- Swimlane 1 -->
+  <div class="swimlane">
+    <div class="swimlane-title">Crystal Cavern — Sprint 47</div>
+    <div class="columns">
+      <div class="column">
+        <div class="column-header">Backlog</div>
+        <div class="cards">
+          <div class="card">
+            <input type="checkbox">
+            <span class="card-title">Refactor auth middleware</span>
+            <span class="score">7</span>
+          </div>
+          <div class="card">
+            <input type="checkbox">
+            <span class="card-title">Implement SSO integration</span>
+            <span class="score">9</span>
+          </div>
+          <div class="card">
+            <input type="checkbox">
+            <span class="card-title">Update API rate limiter</span>
+            <span class="score">4</span>
+          </div>
+        </div>
+      </div>
+      <div class="column">
+        <div class="column-header">In Progress</div>
+        <div class="cards">
+          <div class="card">
+            <input type="checkbox">
+            <span class="card-title">Database migration script</span>
+            <span class="score">6</span>
+          </div>
+          <div class="card">
+            <input type="checkbox">
+            <span class="card-title">WebSocket event handlers</span>
+            <span class="score">8</span>
+          </div>
+        </div>
+      </div>
+      <div class="column">
+        <div class="column-header">Done</div>
+        <div class="cards">
+          <div class="card done">
+            <input type="checkbox" checked>
+            <span class="card-title">Setup CI pipeline</span>
+            <span class="score">3</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Swimlane 2 -->
+  <div class="swimlane">
+    <div class="swimlane-title">Underground River — Research</div>
+    <div class="columns">
+      <div class="column">
+        <div class="column-header">Exploring</div>
+        <div class="cards">
+          <div class="card">
+            <input type="checkbox">
+            <span class="card-title">Evaluate edge runtime options</span>
+            <span class="score">6</span>
+          </div>
+          <div class="card">
+            <input type="checkbox">
+            <span class="card-title">Benchmark serialization libs</span>
+            <span class="score">4</span>
+          </div>
+        </div>
+      </div>
+      <div class="column">
+        <div class="column-header">Decided</div>
+        <div class="cards">
+          <div class="card">
+            <input type="checkbox">
+            <span class="card-title">Go with Bun for tooling</span>
+            <span class="score">7</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Swimlane 3 -->
+  <div class="swimlane">
+    <div class="swimlane-title">The Depths — Critical</div>
+    <div class="columns">
+      <div class="column">
+        <div class="column-header">Critical</div>
+        <div class="cards">
+          <div class="card">
+            <input type="checkbox">
+            <span class="card-title">Fix production memory leak</span>
+            <span class="score">9</span>
+          </div>
+          <div class="card">
+            <input type="checkbox">
+            <span class="card-title">Patch CVE-2026-1234</span>
+            <span class="score">10</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

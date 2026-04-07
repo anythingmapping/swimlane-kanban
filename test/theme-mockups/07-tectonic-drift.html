@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Theme 7: Tectonic Drift</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Rajdhani', sans-serif;
+    background: #0C0A0A;
+    color: #D0C8C0;
+    min-height: 100vh;
+  }
+  .theme-label {
+    text-align: center; padding: 18px;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 1.2em; font-weight: 600;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    color: #FF6B35;
+    text-shadow: 0 0 12px rgba(255,107,53,0.5), 0 0 30px rgba(204,51,17,0.2);
+    background: #080606;
+    border-bottom: 2px solid #2A1A14;
+  }
+  .board { display: flex; flex-direction: column; gap: 24px; padding: 24px 20px; }
+
+  .swimlane {
+    position: relative;
+    border: 1px solid #2A1A14;
+    border-top: 3px solid var(--accent);
+    border-radius: 2px;
+    background: #141010;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.5);
+    overflow: visible;
+  }
+  /* Jagged magma border effect via pseudo-element */
+  .swimlane::before {
+    content: '';
+    position: absolute;
+    top: -4px; left: 0; right: 0;
+    height: 8px;
+    background: var(--accent);
+    clip-path: polygon(
+      0% 50%, 2% 0%, 5% 80%, 8% 10%, 11% 70%, 14% 20%, 17% 90%, 20% 0%,
+      23% 60%, 26% 15%, 29% 85%, 32% 5%, 35% 75%, 38% 25%, 41% 95%, 44% 10%,
+      47% 65%, 50% 0%, 53% 80%, 56% 20%, 59% 70%, 62% 10%, 65% 90%, 68% 30%,
+      71% 75%, 74% 5%, 77% 85%, 80% 15%, 83% 60%, 86% 0%, 89% 80%, 92% 25%,
+      95% 70%, 98% 10%, 100% 50%, 100% 100%, 0% 100%
+    );
+    box-shadow: 0 0 12px var(--accent), 0 0 24px color-mix(in srgb, var(--accent) 50%, transparent);
+    z-index: 1;
+  }
+  /* Magma glow on swimlane borders */
+  .swimlane::after {
+    content: '';
+    position: absolute;
+    top: -2px; left: -2px; right: -2px; bottom: -2px;
+    border-radius: 3px;
+    box-shadow:
+      inset 0 0 15px color-mix(in srgb, var(--accent) 10%, transparent),
+      0 0 8px color-mix(in srgb, var(--accent) 20%, transparent),
+      0 0 20px color-mix(in srgb, var(--accent) 10%, transparent);
+    pointer-events: none;
+    z-index: 0;
+  }
+  .swimlane-header {
+    position: relative; z-index: 2;
+    display: flex; align-items: center; gap: 8px;
+    padding: 10px 14px;
+    background: #0E0A0A;
+    border-bottom: 1px solid #2A1A14;
+  }
+  .swimlane-title {
+    flex: 1; font-family: 'Rajdhani', sans-serif;
+    font-weight: 600; font-size: 0.85em;
+    text-transform: uppercase; letter-spacing: 0.10em;
+    color: var(--accent);
+    text-shadow: 0 0 8px color-mix(in srgb, var(--accent) 40%, transparent);
+  }
+  .badge {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 0.72em; font-weight: 600;
+    padding: 2px 7px; border-radius: 2px;
+    background: #0E0A0A; border: 1px solid #2A1A14;
+    color: #7A8090;
+  }
+  .btn {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 0.70em; font-weight: 600;
+    padding: 2px 8px; border-radius: 2px;
+    letter-spacing: 0.06em; text-transform: uppercase;
+    cursor: pointer; border-width: 1px; border-style: solid;
+    line-height: 1.6;
+  }
+  .btn-danger { background: #1A0808; border-color: #CC3311; color: #FF6644; }
+  .btn-warn { background: #1A1008; border-color: #FF6B35; color: #FFAA66; }
+  .btn-ok { background: #0A1408; border-color: #7A8090; color: #A0A8B0; }
+
+  .columns {
+    position: relative; z-index: 2;
+    display: flex; gap: 10px; padding: 10px 12px 16px;
+  }
+
+  .column {
+    flex: 0 0 260px; min-width: 260px;
+    display: flex; flex-direction: column;
+    background: #181212;
+    border: 1px solid #2A1A14;
+    border-top: 3px solid var(--accent);
+    border-radius: 2px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.35);
+  }
+  .column-header {
+    padding: 9px 12px 7px;
+    border-bottom: 1px solid #221814;
+    background: #120E0E;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .column-title {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 0.78em; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.08em;
+    color: #7A8090;
+  }
+  .wip-badge {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 0.72em; font-weight: 600;
+    padding: 2px 6px; border-radius: 2px;
+    background: #0E0A0A; border: 1px solid #2A1A14;
+    color: #7A8090;
+  }
+  .wip-bar { height: 3px; background: #221814; margin: 0 12px; border-radius: 1px; overflow: hidden; }
+  .wip-fill { height: 100%; border-radius: 1px; background: linear-gradient(90deg, #CC3311, #FF6B35); }
+
+  .card-list { display: flex; flex-direction: column; gap: 5px; padding: 8px 7px; }
+
+  .card {
+    padding: 9px 10px;
+    background: color-mix(in srgb, var(--accent) 10%, #1A1414);
+    border: 1px solid color-mix(in srgb, var(--accent) 15%, #2A1A14);
+    border-radius: 2px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+    display: flex; align-items: flex-start; gap: 7px;
+    font-size: 0.88em; line-height: 1.45;
+  }
+  .card:hover {
+    background: color-mix(in srgb, var(--accent) 18%, #1E1616);
+    border-color: color-mix(in srgb, var(--accent) 30%, #2A1A14);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4), 0 0 6px color-mix(in srgb, var(--accent) 15%, transparent);
+    transform: translateY(-1px);
+  }
+  .card-project { border-left: 3px solid var(--accent); }
+  .card-title { flex: 1; }
+  .score {
+    width: 22px; height: 22px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 0.70em; font-weight: 600;
+    background: #0E0A0A; border: 1px solid #2A1A14;
+    color: #FF6B35; flex-shrink: 0;
+  }
+  input[type="checkbox"] { margin-top: 2px; flex-shrink: 0; accent-color: #FF6B35; }
+
+  .card-form {
+    padding: 5px 7px 8px;
+    border-top: 1px solid #221814;
+    background: #120E0E;
+  }
+  .card-input {
+    width: 100%; padding: 6px 10px; font-size: 0.85em;
+    background: #0C0A0A; color: #D0C8C0;
+    border: 1px solid #2A1A14; border-radius: 2px;
+    outline: none; font-family: inherit;
+  }
+  .card-input:focus { border-color: #FF6B35; box-shadow: 0 0 0 2px rgba(255,107,53,0.15); }
+  .card-input::placeholder { color: #4A3A30; }
+</style>
+</head>
+<body>
+<div class="theme-label">Theme 7 — Tectonic Drift</div>
+<div class="board">
+
+  <div class="swimlane" style="--accent: #FF6B35;">
+    <div class="swimlane-header">
+      <span class="swimlane-title">Pacific Plate — Features</span>
+      <span class="btn btn-ok">unclear</span>
+      <span class="btn btn-warn">clear</span>
+      <span class="badge">12</span>
+    </div>
+    <div class="columns">
+      <div class="column" style="--accent: #FF6B35;">
+        <div class="column-header"><span class="column-title">Backlog</span><span class="wip-badge">3/5</span></div>
+        <div class="wip-bar"><div class="wip-fill" style="width: 60%"></div></div>
+        <div class="card-list">
+          <div class="card"><input type="checkbox"><span class="card-title">Refactor auth middleware</span><span class="score">7</span></div>
+          <div class="card card-project"><input type="checkbox"><span class="card-title">Implement SSO integration</span><span class="score">9</span></div>
+          <div class="card"><input type="checkbox"><span class="card-title">Update API rate limiter</span><span class="score">4</span></div>
+        </div>
+        <div class="card-form"><input class="card-input" placeholder="+ Add card..."></div>
+      </div>
+      <div class="column" style="--accent: #FF6B35;">
+        <div class="column-header"><span class="column-title">In Progress</span><span class="wip-badge">2/3</span></div>
+        <div class="wip-bar"><div class="wip-fill" style="width: 66%"></div></div>
+        <div class="card-list">
+          <div class="card"><input type="checkbox"><span class="card-title">Database migration script</span><span class="score">6</span></div>
+          <div class="card card-project"><input type="checkbox"><span class="card-title">WebSocket event handlers</span><span class="score">8</span></div>
+        </div>
+      </div>
+      <div class="column" style="--accent: #FF6B35;">
+        <div class="column-header"><span class="column-title">Done</span></div>
+        <div class="card-list">
+          <div class="card" style="opacity: 0.4;"><input type="checkbox" checked><span class="card-title" style="text-decoration: line-through; color: #4A3A30;">Setup CI pipeline</span><span class="score">3</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="swimlane" style="--accent: #CC3311;">
+    <div class="swimlane-header">
+      <span class="swimlane-title">Ring of Fire — Critical</span>
+      <span class="badge">4</span>
+    </div>
+    <div class="columns">
+      <div class="column" style="--accent: #CC3311;">
+        <div class="column-header"><span class="column-title">Exploring</span></div>
+        <div class="card-list">
+          <div class="card"><input type="checkbox"><span class="card-title">Evaluate edge runtime options</span><span class="score">6</span></div>
+          <div class="card card-project"><input type="checkbox"><span class="card-title">Benchmark serialization libs</span><span class="score">4</span></div>
+        </div>
+      </div>
+      <div class="column" style="--accent: #CC3311;">
+        <div class="column-header"><span class="column-title">Decided</span></div>
+        <div class="card-list">
+          <div class="card"><input type="checkbox"><span class="card-title">Go with Bun for tooling</span><span class="score">7</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="swimlane" style="--accent: #7A8090;">
+    <div class="swimlane-header">
+      <span class="swimlane-title">Subduction Zone — Research</span>
+      <span class="btn btn-danger">reload</span>
+      <span class="badge">2</span>
+    </div>
+    <div class="columns">
+      <div class="column" style="--accent: #7A8090;">
+        <div class="column-header"><span class="column-title">Critical</span></div>
+        <div class="card-list">
+          <div class="card"><input type="checkbox"><span class="card-title">Fix production memory leak</span><span class="score">9</span></div>
+          <div class="card card-project"><input type="checkbox"><span class="card-title">Patch CVE-2026-1234</span><span class="score">10</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

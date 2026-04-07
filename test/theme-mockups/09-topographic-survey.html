@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Theme 9: Topographic Survey</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    background: #0E1008;
+    color: #C8C0B0;
+    min-height: 100vh;
+  }
+  .theme-label {
+    text-align: center; padding: 18px;
+    font-size: 1.1em; font-weight: 600;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    color: #E0D8C8;
+    text-shadow: 0 0 8px rgba(224,216,200,0.3);
+    background: #0A0C06;
+    border-bottom: 2px solid #2A2818;
+  }
+  .board { display: flex; flex-direction: column; gap: 24px; padding: 24px 20px; }
+
+  .swimlane {
+    border: 1px solid #2A2818;
+    border-top: 3px solid var(--accent);
+    border-radius: 3px;
+    background: #141810;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.5);
+    overflow: hidden;
+    /* Contour line pattern */
+    background-image:
+      linear-gradient(to bottom, transparent 0px, transparent 17px, color-mix(in srgb, var(--accent) 6%, transparent) 17px, color-mix(in srgb, var(--accent) 6%, transparent) 18px, transparent 18px),
+      linear-gradient(to bottom, transparent 0px, transparent 33px, color-mix(in srgb, var(--accent) 10%, transparent) 33px, color-mix(in srgb, var(--accent) 10%, transparent) 34px, transparent 34px),
+      linear-gradient(to bottom, transparent 0px, transparent 52px, color-mix(in srgb, var(--accent) 4%, transparent) 52px, color-mix(in srgb, var(--accent) 4%, transparent) 53px, transparent 53px),
+      linear-gradient(to bottom, transparent 0px, transparent 71px, color-mix(in srgb, var(--accent) 8%, transparent) 71px, color-mix(in srgb, var(--accent) 8%, transparent) 72px, transparent 72px);
+    background-size: 100% 80px;
+    background-color: #141810;
+  }
+  .swimlane-header {
+    display: flex; align-items: center; gap: 8px;
+    padding: 10px 14px;
+    background: rgba(10,12,6,0.9);
+    border-bottom: 1px solid #2A2818;
+  }
+  .swimlane-title {
+    flex: 1;
+    font-weight: 600; font-size: 0.82em;
+    text-transform: uppercase; letter-spacing: 0.10em;
+    color: var(--accent);
+    text-shadow: 0 0 6px color-mix(in srgb, var(--accent) 30%, transparent);
+  }
+  .badge {
+    font-size: 0.72em; font-weight: 600;
+    padding: 2px 7px; border-radius: 3px;
+    background: #0A0C06; border: 1px solid #2A2818;
+    color: #B8A080;
+  }
+  .btn {
+    font-size: 0.70em; font-weight: 600;
+    padding: 2px 8px; border-radius: 3px;
+    letter-spacing: 0.06em; text-transform: uppercase;
+    cursor: pointer; border-width: 1px; border-style: solid;
+    line-height: 1.6;
+  }
+  .btn-danger { background: #140A08; border-color: #AA4422; color: #CC6644; }
+  .btn-warn { background: #141008; border-color: #8B6E4A; color: #B8A080; }
+  .btn-ok { background: #0A1408; border-color: #3A7A4A; color: #5AAA6A; }
+
+  .columns { display: flex; gap: 10px; padding: 10px 12px 16px; }
+
+  .column {
+    flex: 0 0 260px; min-width: 260px;
+    display: flex; flex-direction: column;
+    background: #181C12;
+    border: 1px solid #2A2818;
+    border-top: 3px solid var(--accent);
+    border-radius: 3px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.35);
+  }
+  .column-header {
+    padding: 9px 12px 7px;
+    border-bottom: 1px solid #222616;
+    background: #101408;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .column-title {
+    font-size: 0.76em; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.08em;
+    color: #B8A080;
+  }
+  .wip-badge {
+    font-size: 0.72em; font-weight: 600;
+    padding: 2px 6px; border-radius: 3px;
+    background: #0A0C06; border: 1px solid #2A2818;
+    color: #B8A080;
+  }
+  .wip-bar { height: 3px; background: #222616; margin: 0 12px; border-radius: 1px; overflow: hidden; }
+  .wip-fill { height: 100%; border-radius: 1px; background: linear-gradient(90deg, #3A7A4A, #E0D8C8); }
+
+  .card-list { display: flex; flex-direction: column; gap: 5px; padding: 8px 7px; }
+
+  /* Cards as elevation markers */
+  .card {
+    padding: 9px 10px;
+    background: color-mix(in srgb, var(--accent) 10%, #1A1C14);
+    border: 1px solid color-mix(in srgb, var(--accent) 15%, #2A2818);
+    border-left: 3px solid color-mix(in srgb, var(--accent) 40%, #2A2818);
+    border-radius: 2px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+    display: flex; align-items: flex-start; gap: 7px;
+    font-size: 0.88em; line-height: 1.45;
+    position: relative;
+  }
+  .card:hover {
+    background: color-mix(in srgb, var(--accent) 18%, #1E2016);
+    border-color: color-mix(in srgb, var(--accent) 30%, #2A2818);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4), 0 0 6px color-mix(in srgb, var(--accent) 15%, transparent);
+    transform: translateY(-1px);
+  }
+  .card-project { border-left: 3px solid var(--accent); }
+  .card-title { flex: 1; }
+  /* Score styled as elevation marker */
+  .score {
+    width: 24px; height: 24px; border-radius: 2px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.68em; font-weight: 700;
+    background: #0A0C06;
+    border: 1px solid #2A2818;
+    color: #E0D8C8; flex-shrink: 0;
+    position: relative;
+  }
+  .score::after {
+    content: '';
+    position: absolute;
+    bottom: -3px; left: 50%; transform: translateX(-50%);
+    width: 0; height: 0;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 3px solid #2A2818;
+  }
+  input[type="checkbox"] { margin-top: 2px; flex-shrink: 0; accent-color: #3A7A4A; }
+
+  .card-form {
+    padding: 5px 7px 8px;
+    border-top: 1px solid #222616;
+    background: #101408;
+  }
+  .card-input {
+    width: 100%; padding: 6px 10px; font-size: 0.85em;
+    background: #0E1008; color: #C8C0B0;
+    border: 1px solid #2A2818; border-radius: 2px;
+    outline: none; font-family: inherit;
+  }
+  .card-input:focus { border-color: #3A7A4A; box-shadow: 0 0 0 2px rgba(58,122,74,0.15); }
+  .card-input::placeholder { color: #3A3828; }
+</style>
+</head>
+<body>
+<div class="theme-label">Theme 9 — Topographic Survey</div>
+<div class="board">
+
+  <div class="swimlane" style="--accent: #3A7A4A;">
+    <div class="swimlane-header">
+      <span class="swimlane-title">Valley Floor — Backlog</span>
+      <span class="btn btn-ok">unclear</span>
+      <span class="btn btn-warn">clear</span>
+      <span class="badge">12</span>
+    </div>
+    <div class="columns">
+      <div class="column" style="--accent: #3A7A4A;">
+        <div class="column-header"><span class="column-title">Backlog</span><span class="wip-badge">3/5</span></div>
+        <div class="wip-bar"><div class="wip-fill" style="width: 60%"></div></div>
+        <div class="card-list">
+          <div class="card"><input type="checkbox"><span class="card-title">Refactor auth middleware</span><span class="score">7</span></div>
+          <div class="card card-project"><input type="checkbox"><span class="card-title">Implement SSO integration</span><span class="score">9</span></div>
+          <div class="card"><input type="checkbox"><span class="card-title">Update API rate limiter</span><span class="score">4</span></div>
+        </div>
+        <div class="card-form"><input class="card-input" placeholder="+ Add card..."></div>
+      </div>
+      <div class="column" style="--accent: #3A7A4A;">
+        <div class="column-header"><span class="column-title">In Progress</span><span class="wip-badge">2/3</span></div>
+        <div class="wip-bar"><div class="wip-fill" style="width: 66%"></div></div>
+        <div class="card-list">
+          <div class="card"><input type="checkbox"><span class="card-title">Database migration script</span><span class="score">6</span></div>
+          <div class="card card-project"><input type="checkbox"><span class="card-title">WebSocket event handlers</span><span class="score">8</span></div>
+        </div>
+      </div>
+      <div class="column" style="--accent: #3A7A4A;">
+        <div class="column-header"><span class="column-title">Done</span></div>
+        <div class="card-list">
+          <div class="card" style="opacity: 0.4;"><input type="checkbox" checked><span class="card-title" style="text-decoration: line-through; color: #3A3828;">Setup CI pipeline</span><span class="score">3</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="swimlane" style="--accent: #8B6E4A;">
+    <div class="swimlane-header">
+      <span class="swimlane-title">Ridgeline — Active</span>
+      <span class="badge">4</span>
+    </div>
+    <div class="columns">
+      <div class="column" style="--accent: #8B6E4A;">
+        <div class="column-header"><span class="column-title">Exploring</span></div>
+        <div class="card-list">
+          <div class="card"><input type="checkbox"><span class="card-title">Evaluate edge runtime options</span><span class="score">6</span></div>
+          <div class="card card-project"><input type="checkbox"><span class="card-title">Benchmark serialization libs</span><span class="score">4</span></div>
+        </div>
+      </div>
+      <div class="column" style="--accent: #8B6E4A;">
+        <div class="column-header"><span class="column-title">Decided</span></div>
+        <div class="card-list">
+          <div class="card"><input type="checkbox"><span class="card-title">Go with Bun for tooling</span><span class="score">7</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="swimlane" style="--accent: #E0D8C8;">
+    <div class="swimlane-header">
+      <span class="swimlane-title">Summit — Review</span>
+      <span class="btn btn-danger">reload</span>
+      <span class="badge">2</span>
+    </div>
+    <div class="columns">
+      <div class="column" style="--accent: #E0D8C8;">
+        <div class="column-header"><span class="column-title">Critical</span></div>
+        <div class="card-list">
+          <div class="card"><input type="checkbox"><span class="card-title">Fix production memory leak</span><span class="score">9</span></div>
+          <div class="card card-project"><input type="checkbox"><span class="card-title">Patch CVE-2026-1234</span><span class="score">10</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Theme 2: Goa'uld Imperial</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #0A0A0E;
+    color: #E8DCC0;
+    min-height: 100vh;
+  }
+  .theme-label {
+    text-align: center; padding: 18px;
+    font-family: 'Rajdhani', monospace;
+    font-size: 1.3em; font-weight: 600;
+    letter-spacing: 0.2em; text-transform: uppercase;
+    color: #E8C84A;
+    text-shadow: 0 0 12px rgba(232,200,74,0.4);
+    background: #060608;
+    border-bottom: 1px solid #2A2620;
+  }
+  .board { display: flex; flex-direction: column; gap: 24px; padding: 24px 20px; }
+
+  .swimlane {
+    border: 1px solid #3A3428;
+    border-top: 3px solid var(--accent);
+    background: #121214;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.6);
+    overflow: hidden;
+  }
+  .swimlane-header {
+    display: flex; align-items: center; gap: 8px;
+    padding: 10px 14px;
+    background: #0E0E10;
+    border-bottom: 1px solid #3A3428;
+  }
+  .swimlane-title {
+    flex: 1; font-family: 'Rajdhani', monospace;
+    font-weight: 600; font-size: 0.82em;
+    text-transform: uppercase; letter-spacing: 0.14em;
+    color: #E8C84A;
+    text-shadow: 0 0 10px rgba(232,200,74,0.35);
+  }
+  .badge {
+    font-family: 'Rajdhani', monospace;
+    font-size: 0.72em; font-weight: 600;
+    padding: 2px 7px; border-radius: 2px;
+    background: #0E0E10; border: 1px solid #3A3428;
+    color: #A89878;
+  }
+  .btn {
+    font-family: 'Rajdhani', monospace;
+    font-size: 0.70em; font-weight: 600;
+    padding: 2px 8px; border-radius: 2px;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    cursor: pointer; border-width: 1px; border-style: solid;
+    line-height: 1.6;
+  }
+  .btn-danger { background: #1A0808; border-color: #CC1111; color: #FF6655; }
+  .btn-warn { background: #1A1508; border-color: #7A5C1E; color: #E8C84A; }
+  .btn-ok { background: #0A1A0A; border-color: #4A8C2A; color: #6ABB4A; }
+
+  .columns { display: flex; gap: 10px; padding: 10px 12px 16px; }
+
+  .column {
+    flex: 0 0 260px; min-width: 260px;
+    display: flex; flex-direction: column;
+    background: #1A1810;
+    border: 1px solid #3A3428;
+    border-top: 3px solid var(--accent);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+  }
+  .column-header {
+    padding: 9px 12px 7px;
+    border-bottom: 1px solid #2A2620;
+    background: #0E0E10;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .column-title {
+    font-family: 'Rajdhani', monospace;
+    font-weight: 600; font-size: 0.78em;
+    text-transform: uppercase; letter-spacing: 0.10em;
+    color: #A89878;
+  }
+  .wip-badge {
+    font-family: 'Rajdhani', monospace;
+    font-size: 0.72em; font-weight: 600;
+    padding: 2px 6px; border-radius: 2px;
+    background: #0E0E10; border: 1px solid #3A3428;
+    color: #A89878;
+  }
+  .wip-bar { height: 3px; background: #2A2620; margin: 0 12px; border-radius: 1px; overflow: hidden; }
+  .wip-fill { height: 100%; border-radius: 1px; background: linear-gradient(90deg, #7A5C1E, #E8C84A); }
+
+  .card-list { display: flex; flex-direction: column; gap: 5px; padding: 8px 7px; }
+
+  .card {
+    padding: 9px 10px;
+    background: color-mix(in srgb, var(--accent) 15%, #1E1C18);
+    border: 1px solid color-mix(in srgb, var(--accent) 20%, #3A3428);
+    border-radius: 2px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.35);
+    display: flex; align-items: flex-start; gap: 7px;
+    font-size: 0.88em; line-height: 1.45;
+  }
+  .card:hover {
+    border-color: color-mix(in srgb, var(--accent) 40%, #3A3428);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.45), 0 0 6px color-mix(in srgb, var(--accent) 20%, transparent);
+    transform: translateY(-1px);
+  }
+  .card-project { border-left: 3px solid var(--accent); }
+  .card-title { flex: 1; }
+  .score {
+    width: 22px; height: 22px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Rajdhani', monospace;
+    font-size: 0.70em; font-weight: 700;
+    background: #0E0E10; border: 1px solid #3A3428;
+    color: #E8C84A; flex-shrink: 0;
+  }
+  input[type="checkbox"] { margin-top: 2px; flex-shrink: 0; }
+
+  .card-form {
+    padding: 5px 7px 8px;
+    border-top: 1px solid #2A2620;
+    background: #121214;
+  }
+  .card-input {
+    width: 100%; padding: 6px 10px; font-size: 0.85em;
+    background: #0A0A0E; color: #E8DCC0;
+    border: 1px solid #3A3428; border-radius: 2px;
+    outline: none;
+  }
+  .card-input:focus { border-color: #C9A84C; box-shadow: 0 0 0 2px rgba(201,168,76,0.12); }
+  .card-input::placeholder { color: #5A5040; }
+</style>
+</head>
+<body>
+<div class="theme-label">Theme 2 — Goa'uld Imperial</div>
+<div class="board">
+
+  <div class="swimlane" style="--accent: #E8C84A;">
+    <div class="swimlane-header">
+      <span class="swimlane-title">Sprint 47 — Core Features</span>
+      <span class="btn btn-ok">unclear</span>
+      <span class="btn btn-warn">clear</span>
+      <span class="badge">12</span>
+    </div>
+    <div class="columns">
+      <div class="column" style="--accent: #E8C84A;">
+        <div class="column-header"><span class="column-title">Backlog</span><span class="wip-badge">3 / 5</span></div>
+        <div class="wip-bar"><div class="wip-fill" style="width: 60%"></div></div>
+        <div class="card-list">
+          <div class="card"><input type="checkbox"><span class="card-title">Refactor auth middleware</span><span class="score">7</span></div>
+          <div class="card card-project"><input type="checkbox"><span class="card-title">Implement SSO integration</span><span class="score">9</span></div>
+          <div class="card"><input type="checkbox"><span class="card-title">Update API rate limiter</span><span class="score">4</span></div>
+        </div>
+        <div class="card-form"><input class="card-input" placeholder="+ Add card..."></div>
+      </div>
+      <div class="column" style="--accent: #E8C84A;">
+        <div class="column-header"><span class="column-title">In Progress</span><span class="wip-badge">2 / 3</span></div>
+        <div class="wip-bar"><div class="wip-fill" style="width: 66%"></div></div>
+        <div class="card-list">
+          <div class="card"><input type="checkbox"><span class="card-title">Database migration script</span><span class="score">6</span></div>
+          <div class="card card-project"><input type="checkbox"><span class="card-title">WebSocket event handlers</span><span class="score">8</span></div>
+        </div>
+      </div>
+      <div class="column" style="--accent: #E8C84A;">
+        <div class="column-header"><span class="column-title">Done</span></div>
+        <div class="card-list">
+          <div class="card" style="opacity: 0.4;"><input type="checkbox" checked><span class="card-title" style="text-decoration: line-through; color: #5A5040;">Setup CI pipeline</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="swimlane" style="--accent: #CC1111;">
+    <div class="swimlane-header">
+      <span class="swimlane-title">Urgent — Scarlet</span>
+      <span class="btn btn-danger">reload</span>
+      <span class="badge">4</span>
+    </div>
+    <div class="columns">
+      <div class="column" style="--accent: #CC1111;">
+        <div class="column-header"><span class="column-title">Critical</span></div>
+        <div class="card-list">
+          <div class="card"><input type="checkbox"><span class="card-title">Fix production memory leak</span><span class="score">9</span></div>
+          <div class="card card-project"><input type="checkbox"><span class="card-title">Patch CVE-2026-1234</span><span class="score">10</span></div>
+        </div>
+      </div>
+      <div class="column" style="--accent: #CC1111;">
+        <div class="column-header"><span class="column-title">In Progress</span></div>
+        <div class="card-list">
+          <div class="card"><input type="checkbox"><span class="card-title">Rollback deployment v3.2.1</span><span class="score">8</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="swimlane" style="--accent: #A07830;">
+    <div class="swimlane-header">
+      <span class="swimlane-title">Infrastructure — Bronze</span>
+      <span class="badge">5</span>
+    </div>
+    <div class="columns">
+      <div class="column" style="--accent: #A07830;">
+        <div class="column-header"><span class="column-title">Planned</span><span class="wip-badge">2 / 4</span></div>
+        <div class="wip-bar"><div class="wip-fill" style="width: 50%"></div></div>
+        <div class="card-list">
+          <div class="card"><input type="checkbox"><span class="card-title">Terraform module refactor</span><span class="score">6</span></div>
+          <div class="card"><input type="checkbox"><span class="card-title">Setup DR failover region</span><span class="score">7</span></div>
+        </div>
+      </div>
+      <div class="column" style="--accent: #A07830;">
+        <div class="column-header"><span class="column-title">Active</span></div>
+        <div class="card-list">
+          <div class="card card-project"><input type="checkbox"><span class="card-title">K8s cluster upgrade to 1.30</span><span class="score">8</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

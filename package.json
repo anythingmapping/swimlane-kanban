@@ -1,0 +1,31 @@
+{
+  "name": "swimlane-kanban",
+  "version": "0.1.0",
+  "description": "Obsidian Kanban with swimlanes, WIP limits, and per-swimlane columns",
+  "main": "main.js",
+  "scripts": {
+    "dev": "node esbuild.config.mjs",
+    "build": "node esbuild.config.mjs production && ./deploy.sh",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "builtin-modules": "^3.3.0",
+    "esbuild": "^0.19.11",
+    "esbuild-plugin-less": "^1.3.1",
+    "obsidian": "^1.5.7-1",
+    "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "box-intersect": "^1.0.2",
+    "classcat": "^5.0.3",
+    "eventemitter3": "^5.0.1",
+    "immutability-helper": "^3.1.1",
+    "monkey-around": "^2.1.0",
+    "preact": "^10.8.2",
+    "react": "npm:@preact/compat",
+    "react-dom": "npm:@preact/compat"
+  }
+}

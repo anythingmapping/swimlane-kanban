@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Theme 13 — Nautical Dead Reckoning</title>
+<style>
+  :root {
+    --bg: #0A0E14;
+    --parchment: #D4C8A0;
+    --navy: #1A3366;
+    --gold: #C8A050;
+    --bearing-red: #BB4444;
+    --accent: #C8A050;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--parchment);
+    min-height: 100vh;
+    padding: 2rem;
+  }
+
+  h1 {
+    text-align: center;
+    font-size: 1.6rem;
+    font-weight: 600;
+    color: var(--gold);
+    margin-bottom: 2rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .board {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .swimlane {
+    background:
+      repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 59px,
+        color-mix(in srgb, var(--gold) 8%, transparent) 59px,
+        color-mix(in srgb, var(--gold) 8%, transparent) 60px
+      ),
+      repeating-linear-gradient(
+        90deg,
+        transparent,
+        transparent 79px,
+        color-mix(in srgb, var(--gold) 8%, transparent) 79px,
+        color-mix(in srgb, var(--gold) 8%, transparent) 80px
+      ),
+      repeating-linear-gradient(
+        33deg,
+        transparent,
+        transparent 119px,
+        color-mix(in srgb, var(--bearing-red) 5%, transparent) 119px,
+        color-mix(in srgb, var(--bearing-red) 5%, transparent) 120px
+      );
+    background-color: color-mix(in srgb, var(--navy) 30%, var(--bg));
+    border: 1px solid color-mix(in srgb, var(--gold) 25%, transparent);
+    border-radius: 6px;
+    padding: 1rem;
+  }
+
+  .swimlane-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--gold);
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid color-mix(in srgb, var(--gold) 20%, transparent);
+    letter-spacing: 0.06em;
+  }
+
+  .columns {
+    display: flex;
+    gap: 1rem;
+  }
+
+  .column {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .column-header {
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: color-mix(in srgb, var(--parchment) 70%, transparent);
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.4rem;
+    border-bottom: 1px dashed color-mix(in srgb, var(--gold) 15%, transparent);
+  }
+
+  .cards {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .card {
+    background: color-mix(in srgb, var(--accent) 8%, var(--bg));
+    border: 1px solid color-mix(in srgb, var(--accent) 20%, transparent);
+    border-radius: 4px;
+    padding: 0.6rem 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    position: relative;
+    transition: border-color 0.2s;
+  }
+
+  .card::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: -4px;
+    width: 8px;
+    height: 8px;
+    background: var(--gold);
+    border-radius: 50%;
+    transform: translateY(-50%);
+    border: 1px solid var(--bg);
+  }
+
+  .card:hover {
+    border-color: color-mix(in srgb, var(--accent) 50%, transparent);
+  }
+
+  .card input[type="checkbox"] {
+    appearance: none;
+    width: 14px;
+    height: 14px;
+    border: 1.5px solid color-mix(in srgb, var(--parchment) 40%, transparent);
+    border-radius: 3px;
+    flex-shrink: 0;
+    cursor: pointer;
+    position: relative;
+  }
+
+  .card input[type="checkbox"]:checked {
+    background: color-mix(in srgb, var(--gold) 60%, transparent);
+    border-color: var(--gold);
+  }
+
+  .card input[type="checkbox"]:checked::after {
+    content: "\2713";
+    position: absolute;
+    top: -2px;
+    left: 1px;
+    font-size: 11px;
+    color: var(--bg);
+  }
+
+  .card-title {
+    flex: 1;
+    font-size: 0.85rem;
+    color: var(--parchment);
+    line-height: 1.3;
+  }
+
+  .card.done .card-title {
+    text-decoration: line-through;
+    opacity: 0.6;
+  }
+
+  .score {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 2px solid var(--gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--gold);
+    flex-shrink: 0;
+    background: color-mix(in srgb, var(--gold) 8%, transparent);
+    box-shadow: 0 0 4px color-mix(in srgb, var(--gold) 15%, transparent);
+  }
+</style>
+</head>
+<body>
+
+<h1>Theme 13 — Nautical Dead Reckoning</h1>
+
+<div class="board">
+
+  <!-- Swimlane 1 -->
+  <div class="swimlane">
+    <div class="swimlane-title">Bearing 045° — Sprint 47</div>
+    <div class="columns">
+      <div class="column">
+        <div class="column-header">Backlog</div>
+        <div class="cards">
+          <div class="card">
+            <input type="checkbox">
+            <span class="card-title">Refactor auth middleware</span>
+            <span class="score">7</span>
+          </div>
+          <div class="card">
+            <input type="checkbox">
+            <span class="card-title">Implement SSO integration</span>
+            <span class="score">9</span>
+          </div>
+          <div class="card">
+            <input type="checkbox">
+            <span class="card-title">Update API rate limiter</span>
+            <span class="score">4</span>
+          </div>
+        </div>
+      </div>
+      <div class="column">
+        <div class="column-header">In Progress</div>
+        <div class="cards">
+          <div class="card">
+            <input type="checkbox">
+            <span class="card-title">Database migration script</span>
+            <span class="score">6</span>
+          </div>
+          <div class="card">
+            <input type="checkbox">
+            <span class="card-title">WebSocket event handlers</span>
+            <span class="score">8</span>
+          </div>
+        </div>
+      </div>
+      <div class="column">
+        <div class="column-header">Done</div>
+        <div class="cards">
+          <div class="card done">
+            <input type="checkbox" checked>
+            <span class="card-title">Setup CI pipeline</span>
+            <span class="score">3</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Swimlane 2 -->
+  <div class="swimlane">
+    <div class="swimlane-title">Bearing 180° — Research</div>
+    <div class="columns">
+      <div class="column">
+        <div class="column-header">Exploring</div>
+        <div class="cards">
+          <div class="card">
+            <input type="checkbox">
+            <span class="card-title">Evaluate edge runtime options</span>
+            <span class="score">6</span>
+          </div>
+          <div class="card">
+            <input type="checkbox">
+            <span class="card-title">Benchmark serialization libs</span>
+            <span class="score">4</span>
+          </div>
+        </div>
+      </div>
+      <div class="column">
+        <div class="column-header">Decided</div>
+        <div class="cards">
+          <div class="card">
+            <input type="checkbox">
+            <span class="card-title">Go with Bun for tooling</span>
+            <span class="score">7</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Swimlane 3 -->
+  <div class="swimlane">
+    <div class="swimlane-title">Bearing 270° — Critical</div>
+    <div class="columns">
+      <div class="column">
+        <div class="column-header">Critical</div>
+        <div class="cards">
+          <div class="card">
+            <input type="checkbox">
+            <span class="card-title">Fix production memory leak</span>
+            <span class="score">9</span>
+          </div>
+          <div class="card">
+            <input type="checkbox">
+            <span class="card-title">Patch CVE-2026-1234</span>
+            <span class="score">10</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

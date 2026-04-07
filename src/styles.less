@@ -1,0 +1,1834 @@
+// ═══════════════════════════════════════════════════════════════════════════
+// STARGATE GOA'ULD THEME — Swimlane-Kanban
+// Egyptian gold, obsidian, and naquadah
+// ═══════════════════════════════════════════════════════════════════════════
+
+// ── Keyframes ────────────────────────────────────────────────────────────
+
+@keyframes wipPulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.35; }
+}
+
+@keyframes sgGlowPulse {
+  0%, 100% {
+    opacity: 1;
+    box-shadow: 0 0 6px rgba(232, 200, 74, 0.30);
+  }
+  50% {
+    opacity: 0.85;
+    box-shadow: 0 0 14px rgba(232, 200, 74, 0.55);
+  }
+}
+
+@keyframes sgWipCritical {
+  0%, 100% {
+    opacity: 1;
+    box-shadow: 0 0 4px rgba(204, 17, 17, 0.30);
+  }
+  50% {
+    opacity: 0.60;
+    box-shadow: 0 0 12px rgba(204, 17, 17, 0.60);
+  }
+}
+
+@keyframes sgAmberCharged {
+  0%, 100% { box-shadow: 0 0 4px rgba(232, 200, 74, 0.20); }
+  50%       { box-shadow: 0 0 10px rgba(232, 200, 74, 0.50); }
+}
+
+@keyframes swimlane-kanban-countdown {
+  from { width: 100%; }
+  to   { width: 0%; }
+}
+
+// ── Main ─────────────────────────────────────────────────────────────────
+
+.swimlane-kanban {
+
+  // ── Design Tokens ───────────────────────────────────────────────────────
+
+  // Goa'uld gold hierarchy
+  --sg-gold-bright:       #E8C84A;   // polished gold — highlights, titles
+  --sg-gold-primary:      #C9A84C;   // matte gold — borders, accents
+  --sg-gold-dark:         #7A5C1E;   // antiqued gold — recessed areas
+  --sg-gold-dim:          #5A4418;   // very dark gold — subtle accents
+  --sg-gold-glow:         rgba(232, 200, 74, 0.25);
+
+  // Obsidian & stone surfaces (solid, opaque)
+  --sg-surface-void:      #0A0A0E;   // deepest black — board background
+  --sg-surface-obsidian:  #121214;   // primary dark surface — swimlanes
+  --sg-surface-stone:     #1A1810;   // warm dark stone — columns
+  --sg-surface-raised:    #222018;   // raised surface — cards
+  --sg-surface-hover:     #2C2A1E;   // card hover
+  --sg-surface-header:    #0E0E10;   // header bands
+
+  // Naquadah bronze
+  --sg-bronze:            #8C5A2A;   // secondary metal accent
+  --sg-bronze-light:      #A07830;   // lighter bronze
+
+  // Gem red — power indicators, danger
+  --sg-gem-red:           #CC1111;   // hand device gem
+  --sg-gem-glow:          #FF3322;   // active weapon state
+
+  // Text on dark obsidian
+  --sg-text-primary:      #E8DCC0;   // warm parchment white
+  --sg-text-secondary:    #A89878;   // muted sand
+  --sg-text-faint:        #5A5040;   // dark sand — placeholders
+  --sg-text-gold:         #E8C84A;   // gold text for titles
+  --sg-text-on-gold:      #0A0A0E;   // dark text on gold backgrounds
+
+  // Status
+  --sg-status-ok:         #4A8C2A;   // muted green — not neon
+  --sg-status-alert:      #E8C84A;   // gold — at limit
+  --sg-status-critical:   #CC1111;   // gem red — over limit
+
+  // Borders (solid, warm)
+  --sg-border-faint:      #2A2620;   // barely visible warm border
+  --sg-border-mid:        #3A3428;   // standard border
+  --sg-border-gold:       #7A5C1E;   // gold accent border
+  --sg-border-active:     #C9A84C;   // focused / active
+
+  // Geometry — angular, no softness
+  --sg-radius-panel:      0px;       // Goa'uld: sharp right angles
+  --sg-radius-column:     0px;
+  --sg-radius-card:       2px;       // minimal softening on small elements
+  --sg-radius-badge:      2px;
+  --sg-radius-btn:        2px;
+
+  // Typography
+  --sg-font-display:      'Rajdhani', 'Exo 2', 'Courier New', monospace;
+
+  // Timing
+  --sg-duration-fast:     120ms;
+  --sg-duration-mid:      220ms;
+  --sg-duration-slow:     400ms;
+  --sg-ease-out:          cubic-bezier(0.2, 0.8, 0.4, 1);
+
+  // Card base color for color-mix tinting (overridden by themes)
+  --sg-card-base:         #1E1C18;
+
+  // ── Board ───────────────────────────────────────────────────────────────
+
+  &__board {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    padding: 24px 20px;
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+    background: var(--sg-surface-void);
+  }
+
+  // ── Toolbar ────────────────────────────────────────────────────────────
+
+  &__toolbar {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    padding: 0;
+  }
+
+  &__daily-note-btn {
+    background: #1A1508;
+    border: 1px solid var(--sg-border-gold);
+    border-radius: var(--sg-radius-btn);
+    padding: 4px 14px;
+    cursor: pointer;
+    font-family: var(--sg-font-display);
+    font-size: 0.72em;
+    font-weight: 600;
+    letter-spacing: 0.10em;
+    text-transform: uppercase;
+    color: var(--sg-gold-bright);
+    line-height: 1.6;
+    opacity: 0.85;
+    transition: opacity var(--sg-duration-fast) ease,
+                box-shadow var(--sg-duration-fast) ease,
+                background var(--sg-duration-fast) ease;
+
+    &:hover {
+      opacity: 1;
+      background: #2A2010;
+      box-shadow: 0 0 8px var(--sg-gold-glow);
+    }
+  }
+
+  // ── Goal Button & Form ─────────────────────────────────────────────────
+
+  &__goal-btn {
+    background: #1A1508;
+    border: 1px solid var(--sg-border-gold);
+    border-radius: var(--sg-radius-btn);
+    padding: 4px 14px;
+    cursor: pointer;
+    font-family: var(--sg-font-display);
+    font-size: 0.72em;
+    font-weight: 600;
+    letter-spacing: 0.10em;
+    text-transform: uppercase;
+    color: var(--sg-gold-bright);
+    line-height: 1.6;
+    opacity: 0.85;
+    transition: opacity var(--sg-duration-fast) ease,
+                box-shadow var(--sg-duration-fast) ease,
+                background var(--sg-duration-fast) ease;
+
+    &:hover {
+      opacity: 1;
+      background: #2A2010;
+      box-shadow: 0 0 8px var(--sg-gold-glow);
+    }
+  }
+
+  &__goal-form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 10px 12px;
+    background: var(--sg-surface-obsidian);
+    border: 1px solid var(--sg-border-mid);
+    border-radius: var(--sg-radius-panel);
+  }
+
+  &__goal-form-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  &__goal-form-label {
+    flex-shrink: 0;
+    width: 72px;
+    font-family: var(--sg-font-display);
+    font-size: 0.75em;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--sg-text-secondary);
+  }
+
+  &__goal-form-input {
+    flex: 1;
+    min-width: 0;
+    border: 1px solid var(--sg-border-mid);
+    border-radius: var(--sg-radius-card);
+    padding: 5px 9px;
+    font-size: 0.85em;
+    background: var(--sg-surface-void);
+    color: var(--sg-text-primary);
+    box-sizing: border-box;
+    transition: border-color var(--sg-duration-mid) ease;
+
+    &::placeholder {
+      color: var(--sg-text-faint);
+    }
+
+    &:focus {
+      border-color: var(--sg-border-active);
+      outline: none;
+    }
+  }
+
+  &__goal-form-date {
+    max-width: 140px;
+    color-scheme: dark;
+  }
+
+  &__goal-form-actions {
+    display: flex;
+    gap: 6px;
+    margin-top: 2px;
+  }
+
+  &__goal-form-save {
+    padding: 4px 14px;
+    border: 1px solid var(--sg-gold-primary);
+    border-radius: var(--sg-radius-btn);
+    background: #1E1A0E;
+    color: var(--sg-gold-bright);
+    cursor: pointer;
+    font-family: var(--sg-font-display);
+    font-size: 0.78em;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    transition: background var(--sg-duration-fast) ease,
+                box-shadow var(--sg-duration-fast) ease;
+
+    &:hover {
+      background: #2A2010;
+      box-shadow: 0 0 8px var(--sg-gold-glow);
+    }
+  }
+
+  &__goal-form-remove {
+    padding: 4px 14px;
+    border: 1px solid var(--sg-gem-red);
+    border-radius: var(--sg-radius-btn);
+    background: #1A0808;
+    color: #FF6655;
+    cursor: pointer;
+    font-family: var(--sg-font-display);
+    font-size: 0.78em;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    transition: background var(--sg-duration-fast) ease,
+                box-shadow var(--sg-duration-fast) ease;
+
+    &:hover {
+      background: #2A0A0A;
+      box-shadow: 0 0 8px rgba(204, 17, 17, 0.40);
+    }
+  }
+
+  &__goal-form-cancel {
+    padding: 4px 14px;
+    border: 1px solid var(--sg-border-mid);
+    border-radius: var(--sg-radius-btn);
+    background: var(--sg-surface-void);
+    color: var(--sg-text-secondary);
+    cursor: pointer;
+    font-family: var(--sg-font-display);
+    font-size: 0.78em;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    transition: background var(--sg-duration-fast) ease;
+
+    &:hover {
+      background: var(--sg-surface-hover);
+      color: var(--sg-text-primary);
+    }
+  }
+
+  // Sprint header description text
+  &__sprint-header-desc {
+    font-weight: 400;
+    color: var(--sg-text-secondary);
+    font-size: 0.95em;
+  }
+
+  // ── Swimlane ────────────────────────────────────────────────────────────
+
+  &__swimlane {
+    border: 1px solid var(--sg-border-mid);
+    border-top: 3px solid var(--swimlane-accent, var(--sg-gold-primary));
+    border-radius: var(--sg-radius-panel);
+    background: var(--sg-surface-obsidian);
+    box-shadow:
+      0 2px 12px rgba(0, 0, 0, 0.60),
+      inset 0 1px 0 rgba(232, 200, 74, 0.05);
+    overflow: hidden;
+    min-width: 0;
+    max-width: 100%;
+    position: relative;
+  }
+
+  &__swimlane-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+    background: var(--sg-surface-header);
+    border-bottom: 1px solid var(--sg-border-mid);
+    cursor: default;
+  }
+
+  &__swimlane-collapse {
+    flex-shrink: 0;
+    width: 16px;
+    height: 16px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    color: var(--sg-text-secondary);
+    position: relative;
+    transition: color var(--sg-duration-fast) ease;
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 6px;
+      height: 6px;
+      border-right: 1.5px solid currentColor;
+      border-bottom: 1.5px solid currentColor;
+      transform: translate(-65%, -65%) rotate(45deg);
+      transition: transform var(--sg-duration-mid) var(--sg-ease-out);
+    }
+
+    &--collapsed::before {
+      transform: translate(-35%, -50%) rotate(-45deg);
+    }
+
+    &:hover {
+      color: var(--sg-gold-bright);
+    }
+  }
+
+  &__swimlane-title {
+    flex: 1;
+    font-family: var(--sg-font-display);
+    font-weight: 600;
+    font-size: 0.90em;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--sg-text-gold);
+    text-shadow: 0 0 10px rgba(232, 200, 74, 0.35);
+  }
+
+  &__swimlane-reload {
+    flex-shrink: 0;
+    background: #1A0808;
+    border: 1px solid var(--sg-gem-red);
+    border-radius: var(--sg-radius-btn);
+    padding: 2px 8px;
+    cursor: pointer;
+    font-family: var(--sg-font-display);
+    font-size: 0.70em;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #FF6655;
+    line-height: 1.6;
+    opacity: 0.85;
+    margin-inline-start: 2px;
+    transition: opacity var(--sg-duration-fast) ease,
+                box-shadow var(--sg-duration-fast) ease,
+                background var(--sg-duration-fast) ease;
+
+    &:hover {
+      opacity: 1;
+      background: #2A0A0A;
+      box-shadow: 0 0 8px rgba(204, 17, 17, 0.40);
+    }
+  }
+
+  &__swimlane-clear {
+    flex-shrink: 0;
+    background: #1A1508;
+    border: 1px solid var(--sg-gold-dark);
+    border-radius: var(--sg-radius-btn);
+    padding: 2px 8px;
+    cursor: pointer;
+    font-family: var(--sg-font-display);
+    font-size: 0.70em;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--sg-gold-bright);
+    line-height: 1.6;
+    opacity: 0.85;
+    margin-inline-start: 2px;
+    transition: opacity var(--sg-duration-fast) ease,
+                box-shadow var(--sg-duration-fast) ease,
+                background var(--sg-duration-fast) ease;
+
+    &:hover {
+      opacity: 1;
+      background: #2A2010;
+      box-shadow: 0 0 8px var(--sg-gold-glow);
+    }
+  }
+
+  &__swimlane-unclear {
+    flex-shrink: 0;
+    background: #0A1A0A;
+    border: 1px solid var(--sg-status-ok);
+    border-radius: var(--sg-radius-btn);
+    padding: 2px 8px;
+    cursor: pointer;
+    font-family: var(--sg-font-display);
+    font-size: 0.70em;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #6ABB4A;
+    line-height: 1.6;
+    opacity: 0.85;
+    margin-inline-start: 2px;
+    transition: opacity var(--sg-duration-fast) ease,
+                box-shadow var(--sg-duration-fast) ease,
+                background var(--sg-duration-fast) ease;
+
+    &:hover {
+      opacity: 1;
+      background: #122A12;
+      box-shadow: 0 0 8px rgba(74, 140, 42, 0.30);
+    }
+  }
+
+  &__column-clear {
+    width: 100%;
+    background: #1A1508;
+    border: 1px solid var(--sg-gold-dark);
+    border-radius: var(--sg-radius-btn);
+    padding: 2px 8px;
+    cursor: pointer;
+    font-family: var(--sg-font-display);
+    font-size: 0.70em;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--sg-gold);
+    line-height: 1.6;
+    opacity: 0.85;
+    margin-top: 4px;
+    transition: opacity var(--sg-duration-fast) ease,
+                box-shadow var(--sg-duration-fast) ease,
+                background var(--sg-duration-fast) ease;
+
+    &:hover {
+      opacity: 1;
+      background: #2A2010;
+      box-shadow: 0 0 8px var(--sg-gold-glow);
+    }
+  }
+
+  &__column-unclear {
+    width: 100%;
+    background: #0A1A0A;
+    border: 1px solid var(--sg-status-ok);
+    border-radius: var(--sg-radius-btn);
+    padding: 2px 8px;
+    cursor: pointer;
+    font-family: var(--sg-font-display);
+    font-size: 0.70em;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #6ABB4A;
+    line-height: 1.6;
+    opacity: 0.85;
+    margin-top: 2px;
+    transition: opacity var(--sg-duration-fast) ease,
+                box-shadow var(--sg-duration-fast) ease,
+                background var(--sg-duration-fast) ease;
+
+    &:hover {
+      opacity: 1;
+      background: #122A12;
+      box-shadow: 0 0 8px rgba(74, 140, 42, 0.30);
+    }
+  }
+
+  &__swimlane-count {
+    font-family: var(--sg-font-display);
+    font-size: 0.72em;
+    font-weight: 600;
+    padding: 2px 7px;
+    border-radius: var(--sg-radius-badge);
+    background: var(--sg-surface-header);
+    border: 1px solid var(--sg-border-mid);
+    color: var(--sg-text-secondary);
+    white-space: nowrap;
+    letter-spacing: 0.06em;
+  }
+
+  &__swimlane-description-wrap {
+    padding: 6px 14px 8px 14px;
+    border-left: 2px solid var(--swimlane-accent, var(--sg-gold-dark));
+    margin: 0 12px 6px 12px;
+    border-radius: 0;
+    background: var(--sg-surface-void);
+  }
+
+  &__swimlane-description {
+    min-height: 24px;
+    font-size: 0.84em;
+    color: var(--sg-text-secondary);
+    cursor: text;
+    line-height: 1.6;
+
+    p { margin: 0; }
+    a { color: var(--sg-gold-bright); }
+
+    &:hover {
+      color: var(--sg-text-primary);
+    }
+  }
+
+  &__swimlane-description--empty {
+    min-height: 20px;
+  }
+
+  &__swimlane-description-placeholder {
+    color: var(--sg-text-faint);
+    font-style: italic;
+    font-size: 0.85em;
+    pointer-events: none;
+  }
+
+  &__swimlane-desc-editor-wrap {
+    position: relative;
+  }
+
+  &__swimlane-description-editor {
+    width: 100%;
+    min-height: 48px;
+    resize: none;
+    overflow: hidden;
+    font-size: 0.85em;
+    font-family: inherit;
+    color: var(--sg-text-primary);
+    background: var(--sg-surface-void);
+    border: 1px solid var(--sg-border-active);
+    border-radius: var(--sg-radius-card);
+    padding: 7px 10px;
+    line-height: 1.6;
+    outline: none;
+    box-sizing: border-box;
+    box-shadow: 0 0 0 2px rgba(201, 168, 76, 0.10);
+    caret-color: var(--sg-gold-bright);
+  }
+
+  // Wikilink autocomplete dropdown (inline)
+  &__wl-suggest {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    margin-top: 2px;
+    background: var(--sg-surface-obsidian);
+    border: 1px solid var(--sg-border-gold);
+    border-radius: var(--sg-radius-card);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.65);
+    overflow: hidden;
+  }
+
+  &__wl-suggest-item {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 7px 10px;
+    cursor: pointer;
+    font-size: 0.85em;
+    color: var(--sg-text-primary);
+    transition: background var(--sg-duration-fast) ease;
+
+    &:hover, &--active {
+      background: var(--sg-surface-hover);
+    }
+
+    &--active {
+      background: var(--sg-surface-hover);
+      color: var(--sg-text-gold);
+      border-left: 2px solid var(--sg-gold-bright);
+    }
+  }
+
+  &__wl-suggest-icon {
+    flex-shrink: 0;
+    font-size: 0.8em;
+    color: var(--sg-text-faint);
+    font-family: monospace;
+  }
+
+  &__wl-suggest-name {
+    flex: 1;
+    color: var(--sg-text-primary);
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__wl-suggest-path {
+    flex-shrink: 0;
+    font-size: 0.8em;
+    color: var(--sg-text-faint);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 120px;
+  }
+
+  &__swimlane-columns {
+    display: flex;
+    gap: 10px;
+    padding: 10px 12px 16px;
+    overflow-x: auto;
+  }
+
+  // ── Column ──────────────────────────────────────────────────────────────
+
+  &__column {
+    flex: 0 0 var(--column-width, 272px);
+    min-width: var(--column-width, 272px);
+    display: flex;
+    flex-direction: column;
+    background: var(--sg-surface-stone);
+    border: 1px solid var(--sg-border-mid);
+    border-top: 3px solid var(--swimlane-accent, var(--sg-gold-primary));
+    border-radius: var(--sg-radius-column);
+    box-shadow:
+      0 2px 8px rgba(0, 0, 0, 0.40),
+      inset 0 1px 0 rgba(232, 200, 74, 0.04);
+    position: relative;
+    transition: border-color var(--sg-duration-mid) ease,
+                box-shadow var(--sg-duration-mid) ease;
+  }
+
+  &__column-inner {
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__column-resize-handle {
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 5px;
+    cursor: col-resize;
+    z-index: 10;
+    transition: background-color var(--sg-duration-fast) ease;
+
+    &:hover,
+    &:active {
+      background-color: var(--sg-gold-primary);
+      opacity: 0.50;
+    }
+  }
+
+  &__column-header {
+    padding: 9px 12px 7px;
+    border-bottom: 1px solid var(--sg-border-faint);
+    background: var(--sg-surface-header);
+    transition: background var(--sg-duration-mid) ease;
+  }
+
+  &__column-header-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  &__column-drag-handle {
+    flex-shrink: 0;
+    cursor: grab;
+    color: var(--sg-text-faint);
+    font-size: 0.85em;
+    padding: 0 4px 0 0;
+    line-height: 1;
+    user-select: none;
+    opacity: 0.5;
+    transition: opacity var(--sg-duration-fast) ease,
+                color var(--sg-duration-fast) ease;
+
+    &:hover {
+      opacity: 1;
+      color: var(--sg-gold-bright);
+    }
+  }
+
+  &__column--dragging {
+    opacity: 0.80;
+    width: var(--column-width, 272px);
+    border-color: var(--sg-gold-bright);
+    box-shadow:
+      0 0 0 1px var(--sg-gold-bright),
+      0 8px 32px rgba(232, 200, 74, 0.15);
+  }
+
+  &__column-title {
+    flex: 1;
+    font-family: var(--sg-font-display);
+    font-weight: 600;
+    font-size: 0.85em;
+    text-transform: uppercase;
+    letter-spacing: 0.10em;
+    color: var(--sg-text-secondary);
+    transition: color var(--sg-duration-fast) ease;
+
+    .swimlane-kanban__column:hover & {
+      color: var(--sg-text-gold);
+    }
+  }
+
+  // ── WIP System ──────────────────────────────────────────────────────────
+
+  &__wip-badge {
+    font-family: var(--sg-font-display);
+    font-size: 0.74em;
+    font-weight: 600;
+    padding: 2px 7px;
+    border-radius: var(--sg-radius-badge);
+    background: var(--sg-surface-header);
+    border: 1px solid var(--sg-border-mid);
+    color: var(--sg-text-secondary);
+    margin-inline-start: 8px;
+    white-space: nowrap;
+    letter-spacing: 0.06em;
+    transition: background var(--sg-duration-mid) ease,
+                border-color var(--sg-duration-mid) ease,
+                color var(--sg-duration-mid) ease;
+  }
+
+  &__wip-at &__wip-badge {
+    background: #2A2010;
+    border-color: var(--sg-gold-primary);
+    color: var(--sg-gold-bright);
+    animation: sgAmberCharged 2.5s ease-in-out infinite;
+  }
+
+  &__wip-over &__wip-badge {
+    background: #2A0A0A;
+    border-color: var(--sg-gem-red);
+    color: #FF6655;
+    animation: sgWipCritical 1.0s ease-in-out infinite;
+  }
+
+  // WIP at-limit header tint
+  &__wip-at &__column-header {
+    background: linear-gradient(
+      180deg,
+      #1E1A0E 0%,
+      var(--sg-surface-header) 100%
+    );
+  }
+
+  // WIP over-limit header tint
+  &__wip-over &__column-header {
+    background: linear-gradient(
+      180deg,
+      #1E0A0A 0%,
+      var(--sg-surface-header) 100%
+    );
+  }
+
+  &__wip-bar-track {
+    height: 3px;
+    border-radius: 1px;
+    background: var(--sg-border-faint);
+    margin-top: 7px;
+    overflow: hidden;
+  }
+
+  &__wip-bar-fill {
+    height: 100%;
+    border-radius: 1px;
+    background: linear-gradient(
+      90deg,
+      var(--sg-gold-dark) 0%,
+      var(--sg-gold-bright) 100%
+    );
+    transition: width 350ms var(--sg-ease-out);
+
+    .swimlane-kanban__wip-at & {
+      background: linear-gradient(
+        90deg,
+        var(--sg-gold-primary) 0%,
+        var(--sg-gold-bright) 100%
+      );
+      box-shadow: 0 0 4px var(--sg-gold-glow);
+    }
+
+    .swimlane-kanban__wip-over & {
+      background: linear-gradient(
+        90deg,
+        #991111 0%,
+        var(--sg-gem-glow) 100%
+      );
+      box-shadow: 0 0 4px rgba(204, 17, 17, 0.50);
+    }
+  }
+
+  &__column-items {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    padding: 8px 7px;
+    min-height: 48px;
+  }
+
+  &__column-pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    width: 100%;
+    padding: 5px 0;
+    border: 1px dashed var(--sg-border-mid);
+    border-radius: var(--sg-radius-card);
+    background: none;
+    color: var(--sg-text-faint);
+    font-family: var(--sg-font-display);
+    font-size: 0.75em;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    cursor: pointer;
+    transition: background var(--sg-duration-fast) ease,
+                color var(--sg-duration-fast) ease,
+                border-color var(--sg-duration-fast) ease;
+
+    &:hover {
+      background: var(--sg-surface-hover);
+      color: var(--sg-text-gold);
+      border-color: var(--sg-border-gold);
+    }
+  }
+
+  // ── Card ────────────────────────────────────────────────────────────────
+
+  &__card {
+    display: flex;
+    align-items: flex-start;
+    gap: 7px;
+    padding: 9px 10px;
+    background: color-mix(in srgb, var(--swimlane-accent, var(--sg-gold-primary)) 15%, var(--sg-card-base));
+    border: 1px solid color-mix(in srgb, var(--swimlane-accent, var(--sg-gold-primary)) 25%, var(--sg-border-mid));
+    border-radius: var(--sg-radius-card);
+    cursor: grab;
+    box-shadow:
+      0 1px 4px rgba(0, 0, 0, 0.40),
+      inset 0 1px 0 color-mix(in srgb, var(--swimlane-accent, var(--sg-gold-primary)) 10%, transparent);
+    transition:
+      transform var(--sg-duration-fast) var(--sg-ease-out),
+      box-shadow var(--sg-duration-fast) ease,
+      border-color var(--sg-duration-fast) ease;
+    overflow: hidden;
+
+    &:hover {
+      background: color-mix(in srgb, var(--swimlane-accent, var(--sg-gold-primary)) 22%, var(--sg-card-base));
+      border-color: color-mix(in srgb, var(--swimlane-accent, var(--sg-gold-primary)) 40%, var(--sg-border-mid));
+      transform: translateY(-1px);
+      box-shadow:
+        0 4px 12px rgba(0, 0, 0, 0.50),
+        0 0 8px color-mix(in srgb, var(--swimlane-accent, var(--sg-gold-primary)) 30%, transparent);
+    }
+
+    // Checked card — sealed in sarcophagus
+    &:has(.swimlane-kanban__card-checkbox:checked) {
+      opacity: 0.40;
+      background: var(--sg-surface-void);
+
+      .swimlane-kanban__card-title {
+        text-decoration: line-through;
+        color: var(--sg-text-faint);
+      }
+    }
+
+    // Completing card — 3s countdown before move to Done
+    &--completing {
+      opacity: 1 !important;
+      border-left: 3px solid #4CAF50;
+      background: color-mix(in srgb, #4CAF50 8%, var(--sg-card-base));
+      position: relative;
+      overflow: hidden;
+
+      .swimlane-kanban__card-checkbox {
+        accent-color: #4CAF50;
+      }
+    }
+  }
+
+  &__card-countdown-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 3px;
+    width: 100%;
+    background: #4CAF50;
+    animation: swimlane-kanban-countdown 3s linear forwards;
+  }
+
+  &__card--project {
+    background: color-mix(in srgb, var(--swimlane-accent, var(--sg-gold-primary)) 18%, var(--sg-card-base));
+    border-left: 3px solid var(--swimlane-accent, var(--sg-gold-primary));
+    border-radius: var(--sg-radius-card);
+    box-shadow:
+      0 2px 6px rgba(0, 0, 0, 0.45),
+      inset 0 1px 0 color-mix(in srgb, var(--swimlane-accent, var(--sg-gold-primary)) 10%, transparent);
+
+    &:hover {
+      border-left-color: var(--sg-gold-bright);
+    }
+  }
+
+  &__card-collapse-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 0.75em;
+    color: var(--sg-text-secondary);
+    padding: 0 2px;
+    flex-shrink: 0;
+    line-height: 1;
+
+    &:hover {
+      color: var(--sg-gold-bright);
+    }
+  }
+
+  &__card-children {
+    padding: 4px 0 2px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    border-left: 1px solid var(--sg-border-mid);
+    margin-left: 6px;
+    margin-top: 4px;
+
+    .swimlane-kanban__card {
+      font-size: 0.9em;
+      padding: 6px 9px;
+      background: color-mix(in srgb, var(--swimlane-accent, var(--sg-gold-primary)) 10%, var(--sg-card-base));
+    }
+  }
+
+  // Merge-target highlight
+  .is-dropping > &__card,
+  .is-dropping > &__card--project {
+    border-color: var(--sg-status-ok);
+    box-shadow:
+      0 0 0 2px rgba(74, 140, 42, 0.25),
+      0 0 8px rgba(74, 140, 42, 0.15);
+  }
+
+  &__card-score {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    font-family: var(--sg-font-display);
+    font-size: 0.70em;
+    font-weight: 700;
+    line-height: 1;
+    cursor: pointer;
+    background: var(--sg-surface-header);
+    border: 1px solid var(--sg-border-mid);
+    color: var(--sg-text-gold);
+    transition: background var(--sg-duration-fast) ease,
+                border-color var(--sg-duration-fast) ease,
+                color var(--sg-duration-fast) ease;
+
+    &:hover {
+      background: #2A2010;
+      border-color: var(--sg-gold-primary);
+      color: var(--sg-gold-bright);
+    }
+  }
+
+  &__card-score--missing {
+    background: #1A0808;
+    border: 1px solid var(--sg-gem-red);
+    color: #FF6655;
+  }
+
+  &__card-checkbox {
+    margin-top: 2px;
+    flex-shrink: 0;
+  }
+
+  &__card-title {
+    flex: 1;
+    min-width: 0;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    font-size: 0.95em;
+    color: var(--sg-text-primary);
+    line-height: 1.45;
+  }
+
+  // ── Card form ───────────────────────────────────────────────────────────
+
+  &__card-form {
+    padding: 5px 7px 8px;
+    border-top: 1px solid var(--sg-border-faint);
+    flex-shrink: 0;
+    background: var(--sg-surface-obsidian);
+  }
+
+  &__card-form-row {
+    display: flex;
+    gap: 4px;
+  }
+
+  &__card-form-input {
+    flex: 1;
+    min-width: 0;
+    border: 1px solid var(--sg-border-mid);
+    border-radius: var(--sg-radius-card);
+    padding: 6px 10px;
+    font-size: 0.85em;
+    background: var(--sg-surface-void);
+    color: var(--sg-text-primary);
+    transition: border-color var(--sg-duration-mid) ease,
+                box-shadow var(--sg-duration-mid) ease;
+    box-sizing: border-box;
+
+    &::placeholder {
+      color: var(--sg-text-faint);
+    }
+
+    &:focus {
+      border-color: var(--sg-border-active);
+      box-shadow: 0 0 0 2px rgba(201, 168, 76, 0.12);
+      outline: none;
+    }
+  }
+
+  &__card-form-score {
+    width: 50px;
+    flex-shrink: 0;
+    border: 1px solid var(--sg-border-mid);
+    border-radius: var(--sg-radius-card);
+    padding: 6px 6px;
+    font-family: var(--sg-font-display);
+    font-size: 0.85em;
+    background: var(--sg-surface-void);
+    color: var(--sg-gold-bright);
+    text-align: center;
+    box-sizing: border-box;
+    transition: border-color var(--sg-duration-mid) ease,
+                box-shadow var(--sg-duration-mid) ease;
+    caret-color: var(--sg-gold-bright);
+
+    &::placeholder {
+      color: var(--sg-text-faint);
+    }
+
+    &:focus {
+      border-color: var(--sg-gold-primary);
+      box-shadow: 0 0 0 2px rgba(201, 168, 76, 0.12);
+      outline: none;
+    }
+
+    &::-webkit-inner-spin-button,
+    &::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+    -moz-appearance: textfield;
+  }
+
+  // ── Swimlane form ───────────────────────────────────────────────────────
+
+  &__swimlane-form {
+    display: flex;
+    gap: 8px;
+    padding: 10px 0 4px;
+  }
+
+  &__swimlane-form-input {
+    flex: 1;
+    border: 1px solid var(--sg-border-mid);
+    border-radius: var(--sg-radius-card);
+    padding: 8px 12px;
+    background: var(--sg-surface-void);
+    color: var(--sg-text-primary);
+    font-size: 0.88em;
+    transition: border-color var(--sg-duration-mid) ease,
+                box-shadow var(--sg-duration-mid) ease;
+
+    &::placeholder {
+      color: var(--sg-text-faint);
+    }
+
+    &:focus {
+      border-color: var(--sg-border-active);
+      box-shadow: 0 0 0 2px rgba(201, 168, 76, 0.12);
+      outline: none;
+    }
+  }
+
+  &__swimlane-form-btn {
+    padding: 8px 18px;
+    border: 1px solid var(--sg-gold-primary);
+    border-radius: var(--sg-radius-btn);
+    background: #1E1A0E;
+    color: var(--sg-gold-bright);
+    cursor: pointer;
+    font-family: var(--sg-font-display);
+    font-size: 0.88em;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    transition: background var(--sg-duration-fast) ease,
+                box-shadow var(--sg-duration-fast) ease,
+                border-color var(--sg-duration-fast) ease;
+
+    &:hover {
+      background: #2A2010;
+      border-color: var(--sg-gold-bright);
+      box-shadow: 0 0 10px var(--sg-gold-glow);
+    }
+  }
+
+  // ── Sprint Header ─────────────────────────────────────────────────────
+
+  &__sprint-header {
+    font-family: 'Courier New', 'Consolas', monospace;
+    font-size: 0.78em;
+    padding: 10px 14px;
+    background: var(--sg-surface-obsidian);
+    border: 1px solid var(--sg-border-mid);
+    border-radius: var(--sg-radius-panel);
+    line-height: 1.6;
+    color: var(--sg-text-primary);
+  }
+
+  &__sprint-header--on-track {
+    border-left: 3px solid var(--sg-status-ok);
+  }
+
+  &__sprint-header--behind {
+    border-left: 3px solid #E8A830;
+  }
+
+  &__sprint-header--at-risk {
+    border-left: 3px solid var(--sg-gem-red);
+  }
+
+  &__sprint-header--complete {
+    border-left: 3px solid var(--sg-status-ok);
+    box-shadow: 0 0 8px rgba(74, 140, 42, 0.20);
+  }
+
+  &__sprint-header--ended {
+    border-left: 3px solid var(--sg-text-faint);
+    opacity: 0.65;
+  }
+
+  &__sprint-header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+  }
+
+  &__sprint-header-name {
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--sg-text-gold);
+  }
+
+  &__sprint-header-status {
+    color: var(--sg-text-secondary);
+    font-size: 0.95em;
+  }
+
+  &__sprint-header-badge {
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    padding: 1px 6px;
+    border-radius: var(--sg-radius-badge);
+    font-size: 0.9em;
+
+    .swimlane-kanban__sprint-header--on-track & {
+      color: var(--sg-status-ok);
+      background: rgba(74, 140, 42, 0.15);
+    }
+
+    .swimlane-kanban__sprint-header--behind & {
+      color: #E8A830;
+      background: rgba(232, 168, 48, 0.15);
+    }
+
+    .swimlane-kanban__sprint-header--at-risk & {
+      color: var(--sg-gem-red);
+      background: rgba(204, 17, 17, 0.15);
+    }
+
+    .swimlane-kanban__sprint-header--complete & {
+      color: var(--sg-status-ok);
+      background: rgba(74, 140, 42, 0.15);
+    }
+
+    .swimlane-kanban__sprint-header--ended & {
+      color: var(--sg-text-faint);
+      background: rgba(90, 80, 64, 0.15);
+    }
+  }
+
+  &__sprint-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  &__sprint-row-label {
+    width: 42px;
+    flex-shrink: 0;
+    color: var(--sg-text-secondary);
+    text-transform: uppercase;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+  }
+
+  &__sprint-bar {
+    flex: 1;
+    height: 6px;
+    background: var(--sg-border-faint);
+    border-radius: 1px;
+    overflow: hidden;
+    min-width: 80px;
+  }
+
+  &__sprint-bar-fill {
+    height: 100%;
+    border-radius: 1px;
+    transition: width 350ms var(--sg-ease-out);
+  }
+
+  &__sprint-bar-fill--task {
+    background: linear-gradient(90deg, var(--sg-gold-dark) 0%, var(--sg-gold-bright) 100%);
+
+    .swimlane-kanban__sprint-header--complete & {
+      background: linear-gradient(90deg, var(--sg-status-ok) 0%, #6ABB4A 100%);
+    }
+  }
+
+  &__sprint-bar-fill--time {
+    background: linear-gradient(90deg, var(--sg-text-faint) 0%, var(--sg-text-secondary) 100%);
+  }
+
+  &__sprint-row-stat {
+    flex-shrink: 0;
+    min-width: 120px;
+    color: var(--sg-text-secondary);
+    white-space: nowrap;
+  }
+
+  // ── Misc ────────────────────────────────────────────────────────────────
+
+  &__error {
+    padding: 16px;
+    color: var(--sg-gem-glow);
+
+    pre {
+      white-space: pre-wrap;
+      font-size: 0.85em;
+    }
+  }
+
+  &__drag-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  &__sort-placeholder {
+    min-height: 6px;
+    border-radius: var(--sg-radius-card);
+    background: var(--sg-gold-primary);
+    opacity: 0.35;
+    box-shadow: 0 0 8px var(--sg-gold-glow);
+  }
+
+  &__scroll-container {
+    overflow: auto;
+    min-height: 0;
+  }
+
+  &__placeholder {
+    min-height: 2px;
+  }
+}
+
+// ── Scrollbars ────────────────────────────────────────────────────────────
+
+.swimlane-kanban__board,
+.swimlane-kanban__swimlane-columns,
+.swimlane-kanban__column-items {
+  &::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+    border-radius: 0;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #3A3428;
+    border-radius: 0;
+
+    &:hover {
+      background: var(--sg-gold-dark);
+    }
+  }
+
+  scrollbar-width: thin;
+  scrollbar-color: #3A3428 transparent;
+}
+
+// ── Wiki-link autocomplete dropdown (document.body portal) ────────────────
+
+.swimlane-kanban__wikilink-suggest {
+  background: var(--sg-surface-obsidian);
+  border: 1px solid var(--sg-border-gold);
+  border-radius: var(--sg-radius-card);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.65);
+  overflow: hidden;
+
+  &-list {
+    max-height: 240px;
+    overflow-y: auto;
+  }
+
+  &-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 12px;
+    font-size: 0.88em;
+    color: var(--sg-text-primary);
+    cursor: pointer;
+    transition: background var(--sg-duration-fast) ease;
+
+    &:hover {
+      background: var(--sg-surface-hover);
+    }
+
+    &--selected {
+      background: var(--sg-surface-hover);
+      color: var(--sg-text-gold);
+      border-left: 2px solid var(--sg-gold-bright);
+    }
+  }
+
+  &-icon {
+    font-size: 0.8em;
+    opacity: 0.45;
+    flex-shrink: 0;
+    color: var(--sg-text-secondary);
+  }
+}
+
+// ── Trello Theme Overrides ────────────────────────────────────────────────
+//
+// The token system handles colors for most elements, but some rules in the
+// base theme use hardcoded hex values (button backgrounds, WIP gradient
+// tints, scrollbar thumbs) that tokens cannot reach because they appear as
+// literal color stops or shorthand backgrounds.  These overrides are scoped
+// to the two Trello theme variants by targeting the CSS custom property
+// values injected by Board.tsx onto .swimlane-kanban__board.
+//
+// Detection strategy: both Trello themes set --sg-surface-header to a value
+// that is NOT a near-black, so we use a class added by Board.tsx when the
+// theme is 'trello' or 'trello-dark'.  We achieve this cleanly with a
+// data-theme attribute approach — but since Board.tsx currently only sets
+// inline tokens, we instead scope using :has() on a token value, which is
+// not universally available.  The safest zero-JS approach is a sibling
+// data attribute.  We therefore use the .swimlane-kanban--theme-trello and
+// .swimlane-kanban--theme-trello-dark classes that Board.tsx adds to the board
+// wrapper (see accompanying Board.tsx change below).
+
+.swimlane-kanban--theme-trello,
+.swimlane-kanban--theme-trello-dark {
+
+  // ── Toolbar button ──────────────────────────────────────────────────────
+  .swimlane-kanban__daily-note-btn {
+    background: var(--sg-surface-raised);
+    border-color: var(--sg-border-mid);
+    color: var(--sg-text-secondary);
+    text-shadow: none;
+
+    &:hover {
+      background: var(--sg-surface-hover);
+      border-color: var(--sg-border-active);
+      color: var(--sg-gold-bright);
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+    }
+  }
+
+  // ── Swimlane header ─────────────────────────────────────────────────────
+  // Header uses --sg-surface-header which is set to Trello blue.
+  // The swimlane-title uses --sg-text-gold; for Trello that maps to white,
+  // which is correct.  The count badge needs to read as white-on-blue.
+  .swimlane-kanban__swimlane-count {
+    background: rgba(255, 255, 255, 0.18);
+    border-color: rgba(255, 255, 255, 0.25);
+    color: rgba(255, 255, 255, 0.90);
+  }
+
+  // Swimlane collapse chevron — white on blue header
+  .swimlane-kanban__swimlane-collapse {
+    color: rgba(255, 255, 255, 0.70);
+
+    &:hover {
+      color: #FFFFFF;
+    }
+  }
+
+  // Swimlane action buttons — RELOAD / CLEAR / UNCLEAR on blue header
+  .swimlane-kanban__swimlane-reload {
+    background: rgba(0, 0, 0, 0.15);
+    border-color: rgba(255, 255, 255, 0.30);
+    color: rgba(255, 255, 255, 0.90);
+
+    &:hover {
+      background: rgba(0, 0, 0, 0.25);
+      border-color: rgba(255, 255, 255, 0.55);
+      box-shadow: none;
+    }
+  }
+
+  .swimlane-kanban__swimlane-clear {
+    background: rgba(0, 0, 0, 0.15);
+    border-color: rgba(255, 255, 255, 0.30);
+    color: rgba(255, 255, 255, 0.90);
+    text-shadow: none;
+
+    &:hover {
+      background: rgba(0, 0, 0, 0.25);
+      border-color: rgba(255, 255, 255, 0.55);
+      box-shadow: none;
+    }
+  }
+
+  .swimlane-kanban__swimlane-unclear {
+    background: rgba(97, 189, 79, 0.20);
+    border-color: rgba(97, 189, 79, 0.45);
+    color: rgba(255, 255, 255, 0.90);
+
+    &:hover {
+      background: rgba(97, 189, 79, 0.30);
+      border-color: rgba(97, 189, 79, 0.65);
+      box-shadow: none;
+    }
+  }
+
+  // ── Swimlane description area ────────────────────────────────────────────
+  .swimlane-kanban__swimlane-description-wrap {
+    background: var(--sg-surface-void);
+    border-left-color: var(--sg-border-mid);
+  }
+
+  // ── Column header ────────────────────────────────────────────────────────
+  // Remove the gold glow animation from column header hover.
+  .swimlane-kanban__column-title {
+    text-transform: none;
+    letter-spacing: 0.01em;
+    font-size: 0.90em;
+    font-weight: 600;
+    color: #FFFFFF;
+
+    .swimlane-kanban__column:hover & {
+      color: #FFFFFF;
+    }
+  }
+
+  // Column drag handle — uses text-faint which is readable on both variants
+  .swimlane-kanban__column-drag-handle {
+    &:hover {
+      color: var(--sg-gold-bright);
+    }
+  }
+
+  // ── WIP badge — flatten the hardcoded tint colors ────────────────────────
+  .swimlane-kanban__wip-at .swimlane-kanban__wip-badge {
+    background: rgba(0, 121, 191, 0.12);
+    border-color: var(--sg-gold-primary);
+    color: var(--sg-gold-primary);
+    animation: none;   // no glow pulse for clean Trello look
+  }
+
+  .swimlane-kanban__wip-over .swimlane-kanban__wip-badge {
+    background: rgba(235, 90, 70, 0.12);
+    border-color: var(--sg-gem-red);
+    color: var(--sg-gem-red);
+    // keep the critical pulse — it's important UX feedback
+  }
+
+  // WIP column header tints — override the hardcoded gradient stops
+  .swimlane-kanban__wip-at .swimlane-kanban__column-header {
+    background: linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--sg-gold-primary) 8%, var(--sg-surface-header)) 0%,
+      var(--sg-surface-header) 100%
+    );
+  }
+
+  .swimlane-kanban__wip-over .swimlane-kanban__column-header {
+    background: linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--sg-gem-red) 8%, var(--sg-surface-header)) 0%,
+      var(--sg-surface-header) 100%
+    );
+  }
+
+  // WIP bar fill — Trello blue gradient instead of gold
+  .swimlane-kanban__wip-bar-fill {
+    background: linear-gradient(
+      90deg,
+      var(--sg-gold-dark) 0%,
+      var(--sg-gold-bright) 100%
+    );
+
+    .swimlane-kanban__wip-at & {
+      background: linear-gradient(
+        90deg,
+        var(--sg-gold-dark) 0%,
+        var(--sg-gold-primary) 100%
+      );
+      box-shadow: none;
+    }
+
+    .swimlane-kanban__wip-over & {
+      background: linear-gradient(
+        90deg,
+        #C0392B 0%,
+        var(--sg-gem-glow) 100%
+      );
+      box-shadow: none;
+    }
+  }
+
+  // ── Card ──────────────────────────────────────────────────────────────────
+  // Cards should be pure white (light) / dark surface (dark variant) with
+  // a genuine box shadow rather than a glow.  The color-mix tinting in the
+  // base rule still applies but starts from --sg-card-base (white/dark).
+  .swimlane-kanban__card {
+    box-shadow: 0 1px 3px rgba(9, 30, 66, 0.12), 0 0 0 1px rgba(9, 30, 66, 0.06);
+
+    &:hover {
+      box-shadow: 0 4px 10px rgba(9, 30, 66, 0.18), 0 0 0 1px rgba(9, 30, 66, 0.08);
+      transform: translateY(-1px);
+    }
+  }
+
+  // Score bubble — flat style on Trello
+  .swimlane-kanban__card-score {
+    border-radius: 4px;       // pill → subtle rect pill
+
+    &:hover {
+      background: var(--sg-surface-hover);
+      border-color: var(--sg-border-active);
+    }
+  }
+
+  // ── Card form ──────────────────────────────────────────────────────────────
+  .swimlane-kanban__card-form {
+    background: var(--sg-surface-stone);
+    border-top-color: var(--sg-border-faint);
+  }
+
+  .swimlane-kanban__card-form-input {
+    background: var(--sg-surface-raised);
+    color: var(--sg-text-primary);
+
+    &:focus {
+      border-color: var(--sg-border-active);
+      box-shadow: 0 0 0 2px rgba(0, 121, 191, 0.14);
+    }
+  }
+
+  .swimlane-kanban__card-form-score {
+    background: var(--sg-surface-raised);
+    color: var(--sg-gold-primary);
+    caret-color: var(--sg-gold-bright);
+
+    &:focus {
+      border-color: var(--sg-border-active);
+      box-shadow: 0 0 0 2px rgba(0, 121, 191, 0.14);
+    }
+  }
+
+  // ── Column action buttons — CLEAR / UNCLEAR ──────────────────────────────
+  .swimlane-kanban__column-clear {
+    background: var(--sg-surface-raised);
+    border-color: var(--sg-border-mid);
+    color: var(--sg-text-secondary);
+    text-shadow: none;
+
+    &:hover {
+      background: var(--sg-surface-hover);
+      border-color: var(--sg-border-active);
+      color: var(--sg-gold-bright);
+      box-shadow: none;
+    }
+  }
+
+  .swimlane-kanban__column-unclear {
+    background: color-mix(in srgb, var(--sg-status-ok) 10%, var(--sg-surface-raised));
+    border-color: color-mix(in srgb, var(--sg-status-ok) 30%, var(--sg-border-mid));
+    color: color-mix(in srgb, var(--sg-status-ok) 80%, var(--sg-text-primary));
+    text-shadow: none;
+
+    &:hover {
+      background: color-mix(in srgb, var(--sg-status-ok) 18%, var(--sg-surface-raised));
+      border-color: var(--sg-status-ok);
+      box-shadow: none;
+    }
+  }
+
+  // ── Swimlane form ────────────────────────────────────────────────────────
+  .swimlane-kanban__swimlane-form-btn {
+    background: var(--sg-gold-bright);
+    border-color: var(--sg-gold-primary);
+    color: #FFFFFF;
+    text-shadow: none;
+
+    &:hover {
+      background: var(--sg-gold-primary);
+      border-color: var(--sg-gold-dark);
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.20);
+    }
+  }
+
+  // ── Sort placeholder ─────────────────────────────────────────────────────
+  .swimlane-kanban__sort-placeholder {
+    background: var(--sg-gold-bright);
+    opacity: 0.30;
+    box-shadow: none;
+  }
+
+  // ── Pagination buttons ───────────────────────────────────────────────────
+  .swimlane-kanban__column-pagination {
+    color: var(--sg-text-secondary);
+    border-color: var(--sg-border-mid);
+
+    &:hover {
+      background: var(--sg-surface-hover);
+      color: var(--sg-gold-primary);
+      border-color: var(--sg-border-active);
+    }
+  }
+
+  // ── Wiki-link suggest ────────────────────────────────────────────────────
+  .swimlane-kanban__wl-suggest {
+    background: var(--sg-surface-raised);
+    border-color: var(--sg-border-mid);
+    box-shadow: 0 4px 16px rgba(9, 30, 66, 0.18);
+  }
+
+  .swimlane-kanban__wl-suggest-item {
+    &:hover, &--active {
+      background: var(--sg-surface-hover);
+    }
+
+    &--active {
+      color: var(--sg-gold-primary);
+      border-left-color: var(--sg-gold-bright);
+    }
+  }
+
+  // ── Sprint Header — Trello overrides ───────────────────────────────────
+  .swimlane-kanban__sprint-header {
+    background: var(--sg-surface-raised);
+    border-color: var(--sg-border-mid);
+    box-shadow: 0 1px 3px rgba(9, 30, 66, 0.10);
+  }
+
+  .swimlane-kanban__sprint-header-name {
+    color: var(--sg-text-primary);
+  }
+
+  .swimlane-kanban__sprint-bar {
+    background: var(--sg-border-mid);
+  }
+
+  .swimlane-kanban__sprint-bar-fill--task {
+    background: linear-gradient(90deg, var(--sg-gold-dark) 0%, var(--sg-gold-primary) 100%);
+  }
+
+  .swimlane-kanban__sprint-bar-fill--time {
+    background: linear-gradient(90deg, var(--sg-border-mid) 0%, var(--sg-text-faint) 100%);
+  }
+
+  // ── Goal Form — Trello overrides ──────────────────────────────────────
+  .swimlane-kanban__goal-btn {
+    background: var(--sg-surface-raised);
+    border-color: var(--sg-border-mid);
+    color: var(--sg-text-secondary);
+    text-shadow: none;
+
+    &:hover {
+      background: var(--sg-surface-hover);
+      border-color: var(--sg-border-active);
+      color: var(--sg-gold-bright);
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+    }
+  }
+
+  .swimlane-kanban__goal-form {
+    background: var(--sg-surface-raised);
+    border-color: var(--sg-border-mid);
+    box-shadow: 0 1px 3px rgba(9, 30, 66, 0.10);
+  }
+
+  .swimlane-kanban__goal-form-input {
+    background: var(--sg-surface-void);
+
+    &:focus {
+      border-color: var(--sg-border-active);
+    }
+  }
+
+  .swimlane-kanban__goal-form-date {
+    color-scheme: light;
+  }
+
+  .swimlane-kanban__goal-form-save {
+    background: var(--sg-gold-bright);
+    color: #FFFFFF;
+    border-color: var(--sg-gold-primary);
+
+    &:hover {
+      background: var(--sg-gold-primary);
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.20);
+    }
+  }
+
+  .swimlane-kanban__goal-form-cancel {
+    background: var(--sg-surface-raised);
+    border-color: var(--sg-border-mid);
+    color: var(--sg-text-secondary);
+
+    &:hover {
+      background: var(--sg-surface-hover);
+    }
+  }
+}
+
+// ── Trello (light only) — scrollbar override ─────────────────────────────
+// The base scrollbar is hardcoded to near-black values suitable for the
+// dark Stargate theme.  Override for Trello light only.
+.swimlane-kanban--theme-trello {
+  .swimlane-kanban__board,
+  .swimlane-kanban__swimlane-columns,
+  .swimlane-kanban__column-items {
+    &::-webkit-scrollbar-thumb {
+      background: #C1C7D0;
+
+      &:hover {
+        background: #A5ADBA;
+      }
+    }
+
+    scrollbar-color: #C1C7D0 transparent;
+  }
+}
+
+// ── Accessibility ─────────────────────────────────────────────────────────
+
+@media (prefers-reduced-motion: reduce) {
+  .swimlane-kanban {
+    &__wip-badge {
+      animation: none !important;
+    }
+
+    &__card,
+    &__column,
+    &__swimlane {
+      transition: none !important;
+    }
+  }
+}
