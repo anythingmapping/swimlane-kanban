@@ -5,6 +5,6 @@
   "minAppVersion": "1.0.0",
   "description": "Kanban boards with swimlanes, WIP limits, and per-swimlane columns.",
   "author": "Lucas",
-  "repo": "anythingmapping/swimlane-kanban",
+  "authorUrl": "www.anythingmapping.com",
   "isDesktopOnly": true
 }
