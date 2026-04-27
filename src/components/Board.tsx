@@ -48,7 +48,7 @@ export function Board({ stateManager, view }: BoardProps) {
         }
       }
     }
-    sendToDailyNote(stateManager.app, titles);
+    sendToDailyNote(stateManager.app, titles, view.file?.path);
   };
 
   return (

@@ -2,7 +2,7 @@ import { App, Notice, TFile } from 'obsidian';
 
 const HEADING = '## KANBAN';
 
-export async function sendToDailyNote(app: App, titles: string[]) {
+export async function sendToDailyNote(app: App, titles: string[], boardPath?: string) {
   if (titles.length === 0) {
     new Notice('No items to send');
     return;
@@ -18,7 +18,14 @@ export async function sendToDailyNote(app: App, titles: string[]) {
   const dateStr = (window as any).moment().format(format);
   const filePath = folder ? `${folder}/${dateStr}.md` : `${dateStr}.md`;
 
-  const items = titles.map((t) => `- [ ] ${t}`).join('\n');
+  // Build board wiki-link so the daily note can trace back to the source board
+  let boardLink = '';
+  if (boardPath) {
+    const boardName = boardPath.replace(/\.md$/, '').split('/').pop() || boardPath;
+    boardLink = `#### [[${boardName}]]\n`;
+  }
+
+  const items = boardLink + titles.map((t) => `- [ ] ${t}`).join('\n');
 
   const existing = app.vault.getAbstractFileByPath(filePath);
   if (existing && existing instanceof TFile) {

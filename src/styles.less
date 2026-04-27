@@ -1020,10 +1020,50 @@
     }
   }
 
+  &__card-priority {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 18px;
+    padding: 0 5px;
+    border-radius: 3px;
+    font-family: var(--sg-font-display);
+    font-size: 0.65em;
+    font-weight: 700;
+    line-height: 1;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    background: var(--sg-surface-header);
+    border: 1px solid var(--sg-border-mid);
+    color: var(--sg-text-gold);
+  }
+
   &__card-score--missing {
     background: #1A0808;
     border: 1px solid var(--sg-gem-red);
     color: #FF6655;
+  }
+
+  &__card-move-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 0.6em;
+    color: var(--sg-text-faint);
+    padding: 0 2px;
+    flex-shrink: 0;
+    line-height: 1;
+    opacity: 0;
+    transition: opacity var(--sg-duration-fast) ease, color var(--sg-duration-fast) ease;
+
+    &:hover {
+      color: var(--sg-gold-bright);
+    }
+  }
+
+  &__card:hover &__card-move-btn {
+    opacity: 1;
   }
 
   &__card-checkbox {
@@ -1366,6 +1406,12 @@
 
   scrollbar-width: thin;
   scrollbar-color: #3A3428 transparent;
+}
+
+// ── Modal textarea wrapper (for wiki-link suggest positioning) ─────────────
+
+.swimlane-kanban__modal-ta-wrap {
+  position: relative;
 }
 
 // ── Wiki-link autocomplete dropdown (document.body portal) ────────────────

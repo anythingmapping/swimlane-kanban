@@ -98,6 +98,15 @@ export function Card({ item, itemIndex, columnPath, isStatic }: CardProps) {
   const isProject = item.children.length > 0;
   const isTopLevel = columnPath.length === 2;
 
+  // Column move arrows: only for top-level cards
+  const swimlaneIdx = columnPath[0];
+  const columnIdx = columnPath[1];
+  const columnCount = isTopLevel
+    ? (stateManager.state?.children?.[swimlaneIdx]?.children?.length ?? 0)
+    : 0;
+  const showLeftArrow = isTopLevel && columnIdx > 0;
+  const showRightArrow = isTopLevel && columnIdx < columnCount - 1;
+
   const data = useMemo<EntityData>(
     () => ({
       id: item.id,
@@ -259,6 +268,29 @@ export function Card({ item, itemIndex, columnPath, isStatic }: CardProps) {
         .onClick(promptScore);
     });
 
+    menu.addItem((menuItem) => {
+      menuItem
+        .setTitle('Set priority...')
+        .setIcon('lucide-signal')
+        .onClick(() => {
+          const current = item.data.priority || '';
+          const modal = new InputModal(
+            stateManager.app,
+            'Priority (e.g. P0, high, 1 — leave blank to clear):',
+            current,
+            (val) => {
+              if (val === null) return;
+              const trimmed = val.trim();
+              boardModifiers.updateItem(itemPath, {
+                ...item,
+                data: { ...item.data, priority: trimmed || undefined },
+              });
+            }
+          );
+          modal.open();
+        });
+    });
+
     if (isProject) {
       menu.addItem((menuItem) => {
         menuItem
@@ -339,6 +371,20 @@ export function Card({ item, itemIndex, columnPath, isStatic }: CardProps) {
       onContextMenu={handleContextMenu}
     >
       {completing && <div className={c('card-countdown-bar')} />}
+      {showLeftArrow && (
+        <button
+          className={c('card-move-btn') + ' ' + c('card-move-btn--left')}
+          onClick={(e) => {
+            e.stopPropagation();
+            boardModifiers.moveItemToColumn(itemPath, -1);
+          }}
+          onMouseDown={(e) => e.stopPropagation()}
+          data-ignore-drag
+          title="Move to previous column"
+        >
+          ◀
+        </button>
+      )}
       <input
         type="checkbox"
         checked={item.data.checked}
@@ -347,6 +393,9 @@ export function Card({ item, itemIndex, columnPath, isStatic }: CardProps) {
         data-ignore-drag
       />
       {titleArea}
+      {item.data.priority && (
+        <span className={c('card-priority')}>{item.data.priority}</span>
+      )}
       {item.data.score !== undefined ? (
         <span className={c('card-score')} style={scoreStyles(item.data.score)}
           onClick={(e) => { e.stopPropagation(); promptScore(); }}
@@ -373,6 +422,20 @@ export function Card({ item, itemIndex, columnPath, isStatic }: CardProps) {
           title={collapsed ? 'Expand sub-cards' : 'Collapse sub-cards'}
         >
           {collapsed ? `▶ ${item.children.length}` : `▼ ${item.children.length}`}
+        </button>
+      )}
+      {showRightArrow && (
+        <button
+          className={c('card-move-btn') + ' ' + c('card-move-btn--right')}
+          onClick={(e) => {
+            e.stopPropagation();
+            boardModifiers.moveItemToColumn(itemPath, 1);
+          }}
+          onMouseDown={(e) => e.stopPropagation()}
+          data-ignore-drag
+          title="Move to next column"
+        >
+          ▶
         </button>
       )}
     </div>

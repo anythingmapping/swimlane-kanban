@@ -168,23 +168,39 @@ export default class SwimlaneKanbanPlugin extends Plugin {
   }
 
   removeView(view: SwimlaneKanbanView) {
-    const entry = Array.from(this.windowRegistry.entries()).find(([, reg]) => {
-      return reg.viewMap.has(view.id);
-    });
+    // Search by object reference, not view.id, because view.id is a dynamic
+    // getter based on this.file which Obsidian may have already changed to the
+    // new file before our onLoadFile handler runs.
+    let targetWin: Window | undefined;
+    let targetReg: WindowRegistry | undefined;
+    let targetId: string | undefined;
 
-    if (!entry) return;
-
-    const [win, reg] = entry;
-    const file = view.file;
-
-    if (reg.viewMap.has(view.id)) {
-      reg.viewMap.delete(view.id);
+    for (const [win, reg] of this.windowRegistry.entries()) {
+      for (const [id, v] of reg.viewMap.entries()) {
+        if (v === view) {
+          targetWin = win;
+          targetReg = reg;
+          targetId = id;
+          break;
+        }
+      }
+      if (targetReg) break;
     }
 
-    if (this.stateManagers.has(file)) {
-      this.stateManagers.get(file).unregisterView(view);
-      reg.viewStateReceivers.forEach((fn) => fn(this.getSwimlaneKanbanViews(win)));
+    if (!targetReg || !targetId) return;
+
+    targetReg.viewMap.delete(targetId);
+
+    // Unregister from whichever stateManager owns this view (view.file may
+    // already point to the new file, so we can't rely on it for the lookup).
+    for (const manager of this.stateManagers.values()) {
+      if (manager.viewSet.has(view)) {
+        manager.unregisterView(view);
+        break;
+      }
     }
+
+    targetReg.viewStateReceivers.forEach((fn) => fn(this.getSwimlaneKanbanViews(targetWin)));
   }
 
   handleViewFileRename(view: SwimlaneKanbanView, oldPath: string) {

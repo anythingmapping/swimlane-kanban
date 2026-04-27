@@ -24,6 +24,7 @@ const swimlaneRegex = /^#\s+Swimlane:\s*(.+?)(?:\s+\[color:(\w+)\])?\s*$/;
 const columnRegex = /^##\s+(.+?)(?:\s+\[wip:(\d+)\])?(?:\s+\[width:(\d+)\])?\s*$/;
 const itemRegex = /^(\s*)-\s+\[([ xX])\]\s+(.+)$/;
 const scoreRegex = /\s*\[score::(\d+)\]/;
+const priorityRegex = /\s*\[priority::([^\]]+)\]/;
 const settingsStartRegex = /^%%\s*swimlane-kanban:settings\s*$/;
 const settingsEndRegex = /^%%\s*$/;
 const codeBlockRegex = /^```\s*$/;
@@ -200,11 +201,18 @@ export function parseMarkdown(md: string): Board {
         title = title.replace(scoreRegex, '').trim();
       }
 
+      let priority: string | undefined;
+      const priorityMatch = title.match(priorityRegex);
+      if (priorityMatch) {
+        priority = priorityMatch[1].trim();
+        title = title.replace(priorityRegex, '').trim();
+      }
+
       const item: Item = {
         ...ItemTemplate,
         id: generateInstanceId(),
         children: [],
-        data: { title, checked, score },
+        data: { title, checked, score, priority },
       };
 
       if (indent >= 2 && currentItem) {

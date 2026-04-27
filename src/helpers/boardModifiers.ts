@@ -39,6 +39,7 @@ export interface BoardModifiers {
   demoteToCard: (swimlaneIndex: number) => void;
   moveSwimlane: (fromIndex: number, toIndex: number) => void;
   updateSprint: (sprint: SprintConfig | undefined) => void;
+  moveItemToColumn: (itemPath: Path, direction: -1 | 1) => void;
 }
 
 export function getBoardModifiers(
@@ -217,6 +218,30 @@ export function getBoardModifiers(
       stateManager.setState((board) =>
         update(board, { data: { sprint: { $set: sprint } } })
       );
+    },
+
+    moveItemToColumn: (itemPath: Path, direction: -1 | 1) => {
+      stateManager.setState((board) => {
+        // itemPath = [swimlaneIdx, columnIdx, itemIdx]
+        if (itemPath.length < 3) return board;
+        const swimlaneIdx = itemPath[0];
+        const columnIdx = itemPath[1];
+        const itemIdx = itemPath[2];
+
+        const swimlane = board.children[swimlaneIdx];
+        if (!swimlane) return board;
+
+        const targetColIdx = columnIdx + direction;
+        if (targetColIdx < 0 || targetColIdx >= swimlane.children.length) return board;
+
+        const movedItem = swimlane.children[columnIdx].children[itemIdx];
+        if (!movedItem) return board;
+
+        const afterRemove = removeEntity(board, itemPath);
+        return updateEntity(afterRemove, [swimlaneIdx, targetColIdx], {
+          children: { $push: [movedItem] },
+        });
+      });
     },
   };
 }

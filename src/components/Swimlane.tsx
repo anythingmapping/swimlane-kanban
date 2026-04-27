@@ -187,13 +187,23 @@ export function Swimlane({ swimlane, swimlaneIndex }: SwimlaneProps) {
       scaffold.map((t) => `• ${t}`).join('\n');
     new Notice(summary, 5000);
 
-    const newItems = scaffold.map((title) => ({
-      id: generateInstanceId(),
-      type: DataTypes.Item,
-      accepts: [DataTypes.Item],
-      children: [] as Item[],
-      data: { title, checked: false },
-    }));
+    const priorityRe = /\s*\[priority::([^\]]+)\]/;
+    const newItems = scaffold.map((raw) => {
+      let title = raw;
+      let priority: string | undefined;
+      const m = title.match(priorityRe);
+      if (m) {
+        priority = m[1].trim();
+        title = title.replace(priorityRe, '').trim();
+      }
+      return {
+        id: generateInstanceId(),
+        type: DataTypes.Item,
+        accepts: [DataTypes.Item],
+        children: [] as Item[],
+        data: { title, checked: false, priority },
+      };
+    });
     stateManager.setState((board: any) =>
       updateEntity(board, [swimlaneIndex, 0], {
         children: { $push: newItems },
@@ -370,7 +380,7 @@ export function Swimlane({ swimlane, swimlaneIndex }: SwimlaneProps) {
           const current = (swimlane.data.scaffold || []).join('\n');
           const modal = new TextareaModal(
             stateManager.app,
-            'Weekly scaffold tasks (one per line):',
+            'Scaffold tasks (one per line):',
             current,
             (val) => {
               if (val === null) return;
@@ -380,6 +390,10 @@ export function Swimlane({ swimlane, swimlaneIndex }: SwimlaneProps) {
                   data: { $merge: { scaffold: tasks.length > 0 ? tasks : undefined } },
                 })
               );
+            },
+            {
+              placeholder: 'Standup [priority::P0]\nCode review [priority::P1]\nWeekly report',
+              hint: 'Add [priority::X] to set a priority, e.g. P0, P1, high, low',
             }
           );
           modal.open();

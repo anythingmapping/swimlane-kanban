@@ -94,7 +94,7 @@ export function DragDropApp({ win, plugin }: { win: Window; plugin: SwimlaneKanb
       const [, sourceFile] = dragEntity.scopeId.split(':::');
       const [, destinationFile] = dropEntity.scopeId.split(':::');
 
-      const inDropArea =
+      const isDropArea =
         dropEntityData.acceptsSort && !dropEntityData.acceptsSort.includes(dragEntityData.type);
 
       // Same board
@@ -102,7 +102,12 @@ export function DragDropApp({ win, plugin }: { win: Window; plugin: SwimlaneKanb
         const view = plugin.getSwimlaneKanbanView(dragEntity.scopeId, dragEntityData.win);
         const stateManager = plugin.stateManagers.get(view.file);
 
-        if (inDropArea) {
+        // Only allow subtask creation when dragging within the same column
+        const sameColumn =
+          dragPath.length >= 2 && dropPath.length >= 2 &&
+          dragPath[0] === dropPath[0] && dragPath[1] === dropPath[1];
+
+        if (isDropArea && sameColumn) {
           const targetEntity = getEntityFromPath(stateManager.state, dropPath);
           dropPath.push(targetEntity.children.length);
         }
@@ -112,7 +117,7 @@ export function DragDropApp({ win, plugin }: { win: Window; plugin: SwimlaneKanb
         });
       }
 
-      // Cross-board (simplified)
+      // Cross-board — never create subtasks across boards
       const sourceView = plugin.getSwimlaneKanbanView(dragEntity.scopeId, dragEntityData.win);
       const sourceStateManager = plugin.stateManagers.get(sourceView.file);
       const destinationView = plugin.getSwimlaneKanbanView(dropEntity.scopeId, dropEntityData.win);
@@ -122,10 +127,6 @@ export function DragDropApp({ win, plugin }: { win: Window; plugin: SwimlaneKanb
         const entity = getEntityFromPath(sourceBoard, dragPath);
 
         destinationStateManager.setState((destinationBoard) => {
-          if (inDropArea) {
-            const parent = getEntityFromPath(destinationBoard, dropPath);
-            dropPath.push(parent.children.length);
-          }
           return insertEntity(destinationBoard, dropPath, [entity]);
         });
 

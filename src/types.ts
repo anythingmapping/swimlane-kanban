@@ -7,6 +7,7 @@ export interface ItemData {
   title: string;
   checked: boolean;
   score?: number;
+  priority?: string;
 }
 
 export interface ColumnData {

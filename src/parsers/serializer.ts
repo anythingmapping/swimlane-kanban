@@ -43,7 +43,8 @@ export function serializeBoard(board: Board): string {
       const serializeItem = (item: any, indent: string) => {
         const check = item.data.checked ? 'x' : ' ';
         const scoreStr = item.data.score !== undefined ? ` [score::${item.data.score}]` : '';
-        lines.push(`${indent}- [${check}] ${item.data.title}${scoreStr}`);
+        const priorityStr = item.data.priority ? ` [priority::${item.data.priority}]` : '';
+        lines.push(`${indent}- [${check}] ${item.data.title}${scoreStr}${priorityStr}`);
         for (const child of item.children) {
           serializeItem(child, indent + '  ');
         }

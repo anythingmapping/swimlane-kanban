@@ -135,13 +135,13 @@ export class StateManager {
     return this.state?.data?.settings?.[key] ?? this.getGlobalSettings()?.[key];
   }
 
-  getNewItem(title: string, checked: boolean = false, score?: number): Item {
+  getNewItem(title: string, checked: boolean = false, score?: number, priority?: string): Item {
     return {
       id: generateInstanceId(),
       type: 'item',
       accepts: ['item'],
       children: [],
-      data: { title, checked, score },
+      data: { title, checked, score, priority },
     };
   }
 }
