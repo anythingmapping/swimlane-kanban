@@ -1,10 +1,10 @@
 {
   "id": "swimlane-kanban",
   "name": "Swimlane Kanban",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "minAppVersion": "1.0.0",
   "description": "Kanban boards with swimlanes, WIP limits, and per-swimlane columns.",
   "author": "Lucas",
-  "authorUrl": "https://github.com/AnythingMapping",
+  "repo": "anythingmapping/swimlane-kanban",
   "isDesktopOnly": true
 }
