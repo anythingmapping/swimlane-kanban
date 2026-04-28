@@ -16,7 +16,6 @@ export async function sendToDailyNote(app: App, titles: string[], boardPath?: st
   const format: string = options.format?.trim() || 'YYYY-MM-DD';
 
   // Build path using moment (globally available in Obsidian)
-  // @ts-expect-error Obsidian exposes moment globally on window
   const dateStr = window.moment().format(format);
   const filePath = folder ? `${folder}/${dateStr}.md` : `${dateStr}.md`;
 

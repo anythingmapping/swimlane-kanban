@@ -198,5 +198,5 @@ export function WikiLinkDropdown({ suggest, anchor, accept, close }: WikiLinkDro
     </div>
   );
 
-  return createPortal(dropdown, document.body);
+  return createPortal(dropdown, activeDocument.body);
 }

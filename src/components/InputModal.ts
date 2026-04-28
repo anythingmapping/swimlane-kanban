@@ -28,7 +28,7 @@ export class InputModal extends Modal {
         this.result = value;
       });
       // Focus and select all on open
-      setTimeout(() => {
+      activeWindow.setTimeout(() => {
         text.inputEl.focus();
         text.inputEl.select();
       }, 10);
@@ -141,7 +141,7 @@ export class TextareaModal extends Modal {
       }
     });
 
-    setTimeout(() => ta.inputEl.focus(), 10);
+    activeWindow.setTimeout(() => ta.inputEl.focus(), 10);
 
     new Setting(contentEl)
       .addButton((btn) =>

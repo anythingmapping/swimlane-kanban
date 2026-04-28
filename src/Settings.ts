@@ -16,7 +16,7 @@ export class SwimlaneKanbanSettingsTab extends PluginSettingTab {
     const { containerEl } = this;
     containerEl.empty();
 
-    new Setting(containerEl).setName('General').setHeading();
+    new Setting(containerEl).setName('Display').setHeading();
 
     new Setting(containerEl)
       .setName('Theme')
@@ -51,8 +51,8 @@ export class SwimlaneKanbanSettingsTab extends PluginSettingTab {
       .setDesc('Comma-separated list of default column names for new swimlanes')
       .addText((text) =>
         text
-          .setPlaceholder('To Do, In Progress, Done')
-          .setValue((this.plugin.settings['default-columns'] || ['To Do', 'In Progress', 'Done']).join(', '))
+          .setPlaceholder('To do, in progress, done')
+          .setValue((this.plugin.settings['default-columns'] || ['To do', 'In progress', 'Done']).join(', '))
           .onChange(async (value) => {
             this.plugin.settings['default-columns'] = value.split(',').map((s) => s.trim()).filter(Boolean);
             await this.plugin.saveSettings();
@@ -60,8 +60,8 @@ export class SwimlaneKanbanSettingsTab extends PluginSettingTab {
       );
 
     new Setting(containerEl)
-      .setName('Default WIP limit')
-      .setDesc('Default WIP limit for new columns (leave empty for no limit)')
+      .setName('Default wip limit')
+      .setDesc('Default wip limit for new columns (leave empty for no limit)')
       .addText((text) =>
         text
           .setPlaceholder('')

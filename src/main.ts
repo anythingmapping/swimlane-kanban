@@ -14,7 +14,7 @@ import { createApp } from './DragDropApp';
 import { SwimlaneKanbanView, swimlaneKanbanIcon, swimlaneKanbanViewType } from './SwimlaneKanbanView';
 import { SwimlaneKanbanSettingsTab } from './Settings';
 import { StateManager } from './StateManager';
-import { frontmatterKey, basicFrontmatter, hasFrontmatterKeyRaw } from './parsers/markdown';
+import { frontmatterKey, basicFrontmatter } from './parsers/markdown';
 import { SwimlaneKanbanSettings } from './types';
 
 interface WindowRegistry {
@@ -89,14 +89,12 @@ export default class SwimlaneKanbanPlugin extends Plugin {
     });
 
     this.registerEvent(
-      // @ts-expect-error undocumented Obsidian API: window-open event signature
       this.app.workspace.on('window-open', (_: unknown, win: Window) => {
         this.mount(win);
       })
     );
 
     this.registerEvent(
-      // @ts-expect-error undocumented Obsidian API: window-close event signature
       this.app.workspace.on('window-close', (_: unknown, win: Window) => {
         this.unmount(win);
       })
@@ -345,7 +343,7 @@ export default class SwimlaneKanbanPlugin extends Plugin {
           if (['pane-more-options', 'tab-header'].includes(source)) {
             menu.addItem((item) => {
               item
-                .setTitle('Open as markdown')
+                .setTitle('Open as Markdown')
                 .setIcon('lucide-file-text')
                 .setSection('pane')
                 .onClick(() => {
@@ -404,7 +402,7 @@ export default class SwimlaneKanbanPlugin extends Plugin {
 
     this.addCommand({
       id: 'toggle-view',
-      name: 'Toggle between swimlane kanban and markdown mode',
+      name: 'Toggle between kanban and Markdown mode',
       checkCallback: (checking) => {
         const activeFile = this.app.workspace.getActiveFile();
         if (!activeFile) return false;
@@ -453,20 +451,21 @@ export default class SwimlaneKanbanPlugin extends Plugin {
 
         setViewState(next) {
           return function (state: ViewState, ...rest: unknown[]) {
+            const filePath = state.state?.file as string | undefined;
             if (
               self._loaded &&
               state.type === 'markdown' &&
-              state.state?.file &&
-              self.swimlaneKanbanFileModes[(this as WorkspaceLeaf & { id?: string }).id || state.state.file] !== 'markdown'
+              filePath &&
+              self.swimlaneKanbanFileModes[(this as WorkspaceLeaf & { id?: string }).id || filePath] !== 'markdown'
             ) {
-              const cache = self.app.metadataCache.getCache(state.state.file as string);
+              const cache = self.app.metadataCache.getCache(filePath);
 
               if (cache?.frontmatter && cache.frontmatter[frontmatterKey]) {
                 const newState = {
                   ...state,
                   type: swimlaneKanbanViewType,
                 };
-                self.swimlaneKanbanFileModes[state.state.file] = swimlaneKanbanViewType;
+                self.swimlaneKanbanFileModes[filePath] = swimlaneKanbanViewType;
                 return next.apply(this, [newState, ...rest]);
               }
             }

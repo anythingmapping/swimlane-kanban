@@ -78,8 +78,8 @@ export function Swimlane({ swimlane, swimlaneIndex }: SwimlaneProps) {
   useEffect(() => {
     if (isEditingDesc && textareaRef.current) {
       textareaRef.current.focus();
-      textareaRef.current.style.setProperty('height', 'auto');
-      textareaRef.current.style.setProperty('height', textareaRef.current.scrollHeight + 'px');
+      textareaRef.current.setCssStyles({ height: 'auto' });
+      textareaRef.current.setCssStyles({ height: textareaRef.current.scrollHeight + 'px' });
     }
   }, [isEditingDesc]);
 
@@ -147,8 +147,8 @@ export function Swimlane({ swimlane, swimlaneIndex }: SwimlaneProps) {
       if (!t) return;
       t.focus();
       t.setSelectionRange(newCursor, newCursor);
-      t.style.setProperty('height', 'auto');
-      t.style.setProperty('height', t.scrollHeight + 'px');
+      t.setCssStyles({ height: 'auto' });
+      t.setCssStyles({ height: t.scrollHeight + 'px' });
     });
   };
 
@@ -214,8 +214,8 @@ export function Swimlane({ swimlane, swimlaneIndex }: SwimlaneProps) {
 
   const handleDescInput = (e: Event) => {
     const ta = e.target as HTMLTextAreaElement;
-    ta.style.setProperty('height', 'auto');
-    ta.style.setProperty('height', ta.scrollHeight + 'px');
+    ta.setCssStyles({ height: 'auto' });
+    ta.setCssStyles({ height: ta.scrollHeight + 'px' });
     setEditDesc(ta.value);
     updateWlSuggestions(ta);
   };

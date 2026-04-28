@@ -27,7 +27,7 @@ export function ColumnHeader({ data, itemCount, columnPath, dragHandleRef }: Col
 
     menu.addItem((item) => {
       item
-        .setTitle('Set WIP limit...')
+        .setTitle('Set wip limit...')
         .setIcon('lucide-alert-circle')
         .onClick(() => {
           const modal = new InputModal(

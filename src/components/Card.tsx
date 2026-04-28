@@ -127,14 +127,14 @@ export function Card({ item, itemIndex, columnPath, isStatic }: CardProps) {
       const el = textareaRef.current;
       el.focus();
       el.setSelectionRange(el.value.length, el.value.length);
-      el.style.setProperty('height', 'auto');
-      el.style.setProperty('height', el.scrollHeight + 'px');
+      el.setCssStyles({ height: 'auto' });
+      el.setCssStyles({ height: el.scrollHeight + 'px' });
     }
   }, [editing]);
 
   const autoResize = useCallback((el: HTMLTextAreaElement) => {
-    el.style.setProperty('height', 'auto');
-    el.style.setProperty('height', el.scrollHeight + 'px');
+    el.setCssStyles({ height: 'auto' });
+    el.setCssStyles({ height: el.scrollHeight + 'px' });
   }, []);
 
   const commitEdit = useCallback(() => {
@@ -177,7 +177,7 @@ export function Card({ item, itemIndex, columnPath, isStatic }: CardProps) {
       // Start 3-second countdown to move to Done/last column
       setCompleting(true);
       const cardId = item.id;
-      completingTimer.current = setTimeout(() => {
+      completingTimer.current = activeWindow.setTimeout(() => {
         setCompleting(false);
         // Move card to Done column (or last column) in the same swimlane
         stateManager.setState((board) => {
@@ -221,7 +221,7 @@ export function Card({ item, itemIndex, columnPath, isStatic }: CardProps) {
     } else {
       // Unchecked during countdown — cancel move
       if (completingTimer.current) {
-        clearTimeout(completingTimer.current);
+        activeWindow.clearTimeout(completingTimer.current);
         completingTimer.current = null;
       }
       setCompleting(false);
@@ -231,7 +231,7 @@ export function Card({ item, itemIndex, columnPath, isStatic }: CardProps) {
   // Cleanup timer on unmount
   useEffect(() => {
     return () => {
-      if (completingTimer.current) clearTimeout(completingTimer.current);
+      if (completingTimer.current) activeWindow.clearTimeout(completingTimer.current);
     };
   }, []);
 

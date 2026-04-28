@@ -63,18 +63,17 @@ export function Column({ column, columnIndex, swimlaneIndex }: ColumnProps) {
 
     const startX = e.clientX;
     const startWidth = measureRef.current?.getBoundingClientRect().width ?? 272;
-    document.body.classList.add('swimlane-kanban--resizing');
+    activeDocument.body.classList.add('swimlane-kanban--resizing');
 
     const onMove = (ev: PointerEvent) => {
       const newWidth = Math.max(MIN_COLUMN_WIDTH, Math.round(startWidth + (ev.clientX - startX)));
       if (measureRef.current) {
-        measureRef.current.style.setProperty('flex', `0 0 ${newWidth}px`);
-        measureRef.current.style.setProperty('min-width', `${newWidth}px`);
+        measureRef.current.setCssStyles({ flex: `0 0 ${newWidth}px`, minWidth: `${newWidth}px` });
       }
     };
 
     const onUp = (ev: PointerEvent) => {
-      document.body.classList.remove('swimlane-kanban--resizing');
+      activeDocument.body.classList.remove('swimlane-kanban--resizing');
       target.removeEventListener('pointermove', onMove);
       target.removeEventListener('pointerup', onUp);
       const finalWidth = Math.max(MIN_COLUMN_WIDTH, Math.round(startWidth + (ev.clientX - startX)));

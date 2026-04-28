@@ -1,0 +1,21 @@
+{
+	"compilerOptions": {
+		"target": "es2022",
+		"module": "nodenext",
+		"lib": ["es2022", "dom"],
+		"strict": true,
+		"esModuleInterop": true,
+		"skipLibCheck": true,
+		"forceConsistentCasingInFileNames": true,
+		"outDir": "dist",
+		"rootDir": "./",
+		"baseUrl": ".",
+		"declaration": true,
+		"types": [
+			"node",
+			"semver"
+		]
+	},
+	"include": ["lib/**/*.ts", "tests/**/*.ts", "*.ts", "manifest.json"],
+	"exclude": ["node_modules", "dist"]
+}

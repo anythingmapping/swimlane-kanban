@@ -52,13 +52,13 @@ export function buildPrependMutation(destination: Path, entities: Nestable[]) {
   return buildUpdateParentMutation(destination, { children: { $unshift: entities } });
 }
 
-export function moveEntity(
-  root: Nestable,
+export function moveEntity<T extends Nestable>(
+  root: T,
   source: Path,
   destination: Path,
   transform?: (entity: Nestable) => Nestable | Nestable[],
   replace?: (entity: Nestable) => Nestable
-) {
+): T {
   const entity = transform
     ? transform(getEntityFromPath(root, source))
     : getEntityFromPath(root, source);
@@ -75,10 +75,11 @@ export function moveEntity(
 
   // Simple deep merge for specs
   const mutation = deepMergeSpecs(removeMutation, insertMutation);
-  return update(root, mutation);
+  return update(root, mutation) as T;
 }
 
-function deepMergeSpecs(a: Record<string, unknown>, b: Record<string, unknown>): Record<string, unknown> {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- recursive merge of immutability-helper Spec objects
+function deepMergeSpecs(a: any, b: any): any {
   if (a === undefined) return b;
   if (b === undefined) return a;
   if (typeof a !== 'object' || typeof b !== 'object') return b;
@@ -86,31 +87,31 @@ function deepMergeSpecs(a: Record<string, unknown>, b: Record<string, unknown>):
 
   const result: Record<string, unknown> = { ...a };
   for (const key of Object.keys(b)) {
-    result[key] = deepMergeSpecs(a[key] as Record<string, unknown>, b[key] as Record<string, unknown>);
+    result[key] = deepMergeSpecs(a[key], b[key]);
   }
   return result;
 }
 
-export function removeEntity(root: Nestable, target: Path, replacement?: Nestable) {
-  return update(root, buildRemoveMutation(target, replacement));
+export function removeEntity<T extends Nestable>(root: T, target: Path, replacement?: Nestable): T {
+  return update(root, buildRemoveMutation(target, replacement)) as T;
 }
 
-export function insertEntity(root: Nestable, destination: Path, entities: Nestable[]) {
-  return update(root, buildInsertMutation(destination, entities));
+export function insertEntity<T extends Nestable>(root: T, destination: Path, entities: Nestable[]): T {
+  return update(root, buildInsertMutation(destination, entities)) as T;
 }
 
-export function appendEntities(root: Nestable, destination: Path, entities: Nestable[]) {
-  return update(root, buildAppendMutation(destination, entities));
+export function appendEntities<T extends Nestable>(root: T, destination: Path, entities: Nestable[]): T {
+  return update(root, buildAppendMutation(destination, entities)) as T;
 }
 
-export function prependEntities(root: Nestable, destination: Path, entities: Nestable[]) {
-  return update(root, buildPrependMutation(destination, entities));
+export function prependEntities<T extends Nestable>(root: T, destination: Path, entities: Nestable[]): T {
+  return update(root, buildPrependMutation(destination, entities)) as T;
 }
 
-export function updateEntity(root: Nestable, path: Path, mutation: Spec<Nestable>) {
-  return update(root, buildUpdateMutation(path, mutation));
+export function updateEntity<T extends Nestable>(root: T, path: Path, mutation: Spec<Nestable>): T {
+  return update(root, buildUpdateMutation(path, mutation)) as T;
 }
 
-export function updateParentEntity(root: Nestable, path: Path, mutation: Spec<Nestable>) {
-  return update(root, buildUpdateParentMutation(path, mutation));
+export function updateParentEntity<T extends Nestable>(root: T, path: Path, mutation: Spec<Nestable>): T {
+  return update(root, buildUpdateParentMutation(path, mutation)) as T;
 }

@@ -2,7 +2,6 @@ import EventEmitter from 'eventemitter3';
 import { HoverParent, HoverPopover, Menu, TFile, TextFileView, ViewState, ViewStateResult, WorkspaceLeaf } from 'obsidian';
 
 import { Board } from './components/Board';
-import { StateManager } from './StateManager';
 import { hasFrontmatterKeyRaw } from './parsers/markdown';
 import SwimlaneKanbanPlugin from './main';
 
@@ -42,7 +41,7 @@ export class SwimlaneKanbanView extends TextFileView implements HoverParent {
   }
 
   getWindow() {
-    return (this.containerEl.ownerDocument?.defaultView || window) as Window & typeof globalThis;
+    return this.containerEl.ownerDocument?.defaultView || activeWindow;
   }
 
   async onLoadFile(file: TFile) {
@@ -130,7 +129,7 @@ export class SwimlaneKanbanView extends TextFileView implements HoverParent {
 
     menu.addItem((item) => {
       item
-        .setTitle('Open as markdown')
+        .setTitle('Open as Markdown')
         .setIcon('lucide-file-text')
         .setSection('pane')
         .onClick(() => {
