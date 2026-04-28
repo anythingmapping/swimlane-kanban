@@ -109,7 +109,7 @@ export function getBoardModifiers(
         const cardIndex = projectCardPath[projectCardPath.length - 1];
         // Replace project card with its children in the parent's children array
         const spliceSpec = buildUpdateParentMutation(projectCardPath, {
-          children: { $splice: [[cardIndex, 1, ...(projectCard.children as any[])]] },
+          children: { $splice: [[cardIndex, 1, ...projectCard.children]] },
         });
         return update(board, spliceSpec);
       });

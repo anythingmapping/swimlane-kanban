@@ -29,7 +29,7 @@ export function buildUpdateParentMutation(path: Path, mutation: Spec<Nestable>) 
 
 export function buildRemoveMutation(path: Path, replacement?: Nestable) {
   const last = path[path.length - 1];
-  const val: any = replacement ? [last, 1, replacement] : [last, 1];
+  const val: [number, number, ...Nestable[]] = replacement ? [last, 1, replacement] : [last, 1];
   return buildUpdateParentMutation(path, { children: { $splice: [val] } });
 }
 
@@ -78,15 +78,15 @@ export function moveEntity(
   return update(root, mutation);
 }
 
-function deepMergeSpecs(a: any, b: any): any {
+function deepMergeSpecs(a: Record<string, unknown>, b: Record<string, unknown>): Record<string, unknown> {
   if (a === undefined) return b;
   if (b === undefined) return a;
   if (typeof a !== 'object' || typeof b !== 'object') return b;
   if (Array.isArray(a) && Array.isArray(b)) return [...a, ...b];
 
-  const result: any = { ...a };
+  const result: Record<string, unknown> = { ...a };
   for (const key of Object.keys(b)) {
-    result[key] = deepMergeSpecs(a[key], b[key]);
+    result[key] = deepMergeSpecs(a[key] as Record<string, unknown>, b[key] as Record<string, unknown>);
   }
   return result;
 }

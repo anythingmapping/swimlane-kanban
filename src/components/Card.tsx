@@ -1,5 +1,6 @@
 import { Menu } from 'obsidian';
-import { CSSProperties, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'preact/compat';
+import { JSX } from 'preact';
+import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'preact/compat';
 
 import { Droppable } from '../dnd/components/Droppable';
 import { useDragHandle } from '../dnd/managers/DragManager';
@@ -33,7 +34,7 @@ const SCORE_PALETTE: { bg: string; color: string }[] = [
   { bg: '#172554', color: '#ffffff' }, // 10 – darkest
 ];
 
-export function scoreStyles(score: number): CSSProperties {
+export function scoreStyles(score: number): JSX.CSSProperties {
   const palette = SCORE_PALETTE[Math.max(0, Math.min(10, score))];
   return { backgroundColor: palette.bg, color: palette.color };
 }
@@ -126,14 +127,14 @@ export function Card({ item, itemIndex, columnPath, isStatic }: CardProps) {
       const el = textareaRef.current;
       el.focus();
       el.setSelectionRange(el.value.length, el.value.length);
-      el.style.height = 'auto';
-      el.style.height = el.scrollHeight + 'px';
+      el.style.setProperty('height', 'auto');
+      el.style.setProperty('height', el.scrollHeight + 'px');
     }
   }, [editing]);
 
   const autoResize = useCallback((el: HTMLTextAreaElement) => {
-    el.style.height = 'auto';
-    el.style.height = el.scrollHeight + 'px';
+    el.style.setProperty('height', 'auto');
+    el.style.setProperty('height', el.scrollHeight + 'px');
   }, []);
 
   const commitEdit = useCallback(() => {

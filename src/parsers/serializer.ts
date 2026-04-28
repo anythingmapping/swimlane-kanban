@@ -1,4 +1,4 @@
-import { Board } from '../types';
+import { Board, Item } from '../types';
 import { frontmatterKey } from './markdown';
 
 export function serializeBoard(board: Board): string {
@@ -40,7 +40,7 @@ export function serializeBoard(board: Board): string {
       const widthStr = column.data.width ? ` [width:${column.data.width}]` : '';
       lines.push(`## ${column.data.title}${wipStr}${widthStr}`);
 
-      const serializeItem = (item: any, indent: string) => {
+      const serializeItem = (item: Item, indent: string) => {
         const check = item.data.checked ? 'x' : ' ';
         const scoreStr = item.data.score !== undefined ? ` [score::${item.data.score}]` : '';
         const priorityStr = item.data.priority ? ` [priority::${item.data.priority}]` : '';

@@ -49,9 +49,10 @@ export default class SwimlaneKanbanPlugin extends Plugin {
 
   unload(): void {
     super.unload();
-    Promise.all(
+    void Promise.all(
       this.app.workspace.getLeavesOfType(swimlaneKanbanViewType).map((leaf) => {
-        this.swimlaneKanbanFileModes[(leaf as any).id] = 'markdown';
+        // @ts-expect-error undocumented Obsidian API: WorkspaceLeaf.id
+        this.swimlaneKanbanFileModes[leaf.id] = 'markdown';
         return this.setMarkdownView(leaf);
       })
     );
@@ -82,24 +83,27 @@ export default class SwimlaneKanbanPlugin extends Plugin {
 
     this.mount(window);
 
-    (this.app.workspace as any).floatingSplit?.children?.forEach((c: any) => {
+    // @ts-expect-error undocumented Obsidian API: Workspace.floatingSplit
+    this.app.workspace.floatingSplit?.children?.forEach((c: { win: Window }) => {
       this.mount(c.win);
     });
 
     this.registerEvent(
-      this.app.workspace.on('window-open', (_: any, win: Window) => {
+      // @ts-expect-error undocumented Obsidian API: window-open event signature
+      this.app.workspace.on('window-open', (_: unknown, win: Window) => {
         this.mount(win);
       })
     );
 
     this.registerEvent(
-      this.app.workspace.on('window-close', (_: any, win: Window) => {
+      // @ts-expect-error undocumented Obsidian API: window-close event signature
+      this.app.workspace.on('window-close', (_: unknown, win: Window) => {
         this.unmount(win);
       })
     );
 
-    this.addRibbonIcon(swimlaneKanbanIcon, 'Create new Swimlane Kanban board', () => {
-      this.newBoard();
+    this.addRibbonIcon(swimlaneKanbanIcon, 'Create new swimlane kanban board', () => {
+      void this.newBoard();
     });
 
     this._loaded = true;
@@ -208,7 +212,8 @@ export default class SwimlaneKanbanPlugin extends Plugin {
     if (!this.windowRegistry.has(win)) return;
 
     const reg = this.windowRegistry.get(win);
-    const oldId = `${(view.leaf as any).id}:::${oldPath}`;
+    // @ts-expect-error undocumented Obsidian API: WorkspaceLeaf.id
+    const oldId = `${view.leaf.id}:::${oldPath}`;
 
     if (reg.viewMap.has(oldId)) {
       reg.viewMap.delete(oldId);
@@ -280,7 +285,8 @@ export default class SwimlaneKanbanPlugin extends Plugin {
         );
 
     try {
-      const file: TFile = await (this.app.fileManager as any).createNewMarkdownFile(
+      // @ts-expect-error undocumented Obsidian API: FileManager.createNewMarkdownFile
+    const file: TFile = await this.app.fileManager.createNewMarkdownFile(
         targetFolder,
         'Untitled Swimlane Kanban'
       );
@@ -309,9 +315,9 @@ export default class SwimlaneKanbanPlugin extends Plugin {
           menu.addItem((item) => {
             item
               .setSection('action-primary')
-              .setTitle('New Swimlane Kanban board')
+              .setTitle('New swimlane kanban board')
               .setIcon(swimlaneKanbanIcon)
-              .onClick(() => this.newBoard(file));
+              .onClick(() => void this.newBoard(file));
           });
           return;
         }
@@ -324,12 +330,13 @@ export default class SwimlaneKanbanPlugin extends Plugin {
         ) {
           menu.addItem((item) => {
             item
-              .setTitle('Open as Swimlane Kanban')
+              .setTitle('Open as swimlane kanban')
               .setIcon(swimlaneKanbanIcon)
               .setSection('pane')
               .onClick(() => {
-                this.swimlaneKanbanFileModes[(leaf as any).id || file.path] = swimlaneKanbanViewType;
-                this.setSwimlaneKanbanView(leaf);
+                // @ts-expect-error undocumented Obsidian API: WorkspaceLeaf.id
+                this.swimlaneKanbanFileModes[leaf.id || file.path] = swimlaneKanbanViewType;
+                void this.setSwimlaneKanbanView(leaf);
               });
           });
         }
@@ -342,8 +349,9 @@ export default class SwimlaneKanbanPlugin extends Plugin {
                 .setIcon('lucide-file-text')
                 .setSection('pane')
                 .onClick(() => {
-                  this.swimlaneKanbanFileModes[(leaf as any).id || file.path] = 'markdown';
-                  this.setMarkdownView(leaf);
+                  // @ts-expect-error undocumented Obsidian API: WorkspaceLeaf.id
+                  this.swimlaneKanbanFileModes[leaf.id || file.path] = 'markdown';
+                  void this.setMarkdownView(leaf);
                 });
             });
           }
@@ -389,14 +397,14 @@ export default class SwimlaneKanbanPlugin extends Plugin {
 
   registerCommands() {
     this.addCommand({
-      id: 'create-new-swimlane-kanban-board',
+      id: 'create-new-board',
       name: 'Create new board',
-      callback: () => this.newBoard(),
+      callback: () => void this.newBoard(),
     });
 
     this.addCommand({
-      id: 'toggle-swimlane-kanban-view',
-      name: 'Toggle between Swimlane Kanban and markdown mode',
+      id: 'toggle-view',
+      name: 'Toggle between swimlane kanban and markdown mode',
       checkCallback: (checking) => {
         const activeFile = this.app.workspace.getActiveFile();
         if (!activeFile) return false;
@@ -410,13 +418,15 @@ export default class SwimlaneKanbanPlugin extends Plugin {
         const activeView = this.app.workspace.getActiveViewOfType(SwimlaneKanbanView);
 
         if (activeView) {
-          this.swimlaneKanbanFileModes[(activeView.leaf as any).id || activeFile.path] = 'markdown';
-          this.setMarkdownView(activeView.leaf);
+          // @ts-expect-error undocumented Obsidian API: WorkspaceLeaf.id
+          this.swimlaneKanbanFileModes[activeView.leaf.id || activeFile.path] = 'markdown';
+          void this.setMarkdownView(activeView.leaf);
         } else if (fileIsSwimlaneKanban) {
           const mdView = this.app.workspace.getActiveViewOfType(MarkdownView);
           if (mdView) {
-            this.swimlaneKanbanFileModes[(mdView.leaf as any).id || activeFile.path] = swimlaneKanbanViewType;
-            this.setSwimlaneKanbanView(mdView.leaf);
+            // @ts-expect-error undocumented Obsidian API: WorkspaceLeaf.id
+            this.swimlaneKanbanFileModes[mdView.leaf.id || activeFile.path] = swimlaneKanbanViewType;
+            void this.setSwimlaneKanbanView(mdView.leaf);
           }
         }
       },
@@ -424,6 +434,7 @@ export default class SwimlaneKanbanPlugin extends Plugin {
   }
 
   registerMonkeyPatches() {
+    // eslint-disable-next-line @typescript-eslint/no-this-alias -- `self` is needed because monkey-patched functions bind `this` to the WorkspaceLeaf instance
     const self = this;
 
     // Monkey patch WorkspaceLeaf to open swimlane-kanban files with SwimlaneKanbanView by default
@@ -432,20 +443,21 @@ export default class SwimlaneKanbanPlugin extends Plugin {
         detach(next) {
           return function () {
             const state = this.view?.getState();
-            if (state?.file && self.swimlaneKanbanFileModes[this.id || state.file]) {
-              delete self.swimlaneKanbanFileModes[this.id || state.file];
+            const leafId = (this as WorkspaceLeaf & { id?: string }).id;
+            if (state?.file && self.swimlaneKanbanFileModes[leafId || state.file]) {
+              delete self.swimlaneKanbanFileModes[leafId || state.file];
             }
             return next.apply(this);
           };
         },
 
         setViewState(next) {
-          return function (state: ViewState, ...rest: any[]) {
+          return function (state: ViewState, ...rest: unknown[]) {
             if (
               self._loaded &&
               state.type === 'markdown' &&
               state.state?.file &&
-              self.swimlaneKanbanFileModes[this.id || state.state.file] !== 'markdown'
+              self.swimlaneKanbanFileModes[(this as WorkspaceLeaf & { id?: string }).id || state.state.file] !== 'markdown'
             ) {
               const cache = self.app.metadataCache.getCache(state.state.file as string);
 
@@ -454,7 +466,7 @@ export default class SwimlaneKanbanPlugin extends Plugin {
                   ...state,
                   type: swimlaneKanbanViewType,
                 };
-                self.swimlaneKanbanFileModes[state.state.file as string] = swimlaneKanbanViewType;
+                self.swimlaneKanbanFileModes[state.state.file] = swimlaneKanbanViewType;
                 return next.apply(this, [newState, ...rest]);
               }
             }

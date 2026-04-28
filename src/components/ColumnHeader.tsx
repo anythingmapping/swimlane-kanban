@@ -3,7 +3,7 @@ import { Menu } from 'obsidian';
 import { useContext } from 'preact/compat';
 
 import { updateEntity } from '../dnd/util/data';
-import { ColumnData } from '../types';
+import { Board, ColumnData } from '../types';
 import { InputModal } from './InputModal';
 import { SwimlaneKanbanContext } from './context';
 import { c } from './helpers';
@@ -69,7 +69,7 @@ export function ColumnHeader({ data, itemCount, columnPath, dragHandleRef }: Col
           .setTitle('Delete all cards')
           .setIcon('lucide-eraser')
           .onClick(() => {
-            stateManager.setState((board: any) =>
+            stateManager.setState((board: Board) =>
               updateEntity(board, columnPath, { children: { $set: [] } })
             );
           });

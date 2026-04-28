@@ -1,8 +1,7 @@
-import { CSSProperties, JSX, createPortal, memo, useCallback, useMemo } from 'preact/compat';
+import { JSX } from 'preact';
+import { createPortal, memo, useCallback, useMemo } from 'preact/compat';
 
 import { SwimlaneKanbanView } from './SwimlaneKanbanView';
-import { Board } from './components/Board';
-import { SwimlaneKanbanContext } from './components/context';
 import { scoreStyles } from './components/Card';
 import { DndContext } from './dnd/components/DndContext';
 import { DragOverlay } from './dnd/components/DragOverlay';
@@ -13,7 +12,6 @@ import {
   moveEntity,
   removeEntity,
 } from './dnd/util/data';
-import { getBoardModifiers } from './helpers/boardModifiers';
 import SwimlaneKanbanPlugin from './main';
 import { DataTypes } from './types';
 
@@ -31,7 +29,7 @@ function DragOverlayContent({
   plugin,
 }: {
   entity: Entity;
-  styles: CSSProperties;
+  styles: JSX.CSSProperties;
   plugin: SwimlaneKanbanPlugin;
 }) {
   const data = useMemo(() => {

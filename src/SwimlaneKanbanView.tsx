@@ -1,5 +1,5 @@
 import EventEmitter from 'eventemitter3';
-import { HoverParent, HoverPopover, Menu, TFile, TextFileView, ViewStateResult, WorkspaceLeaf } from 'obsidian';
+import { HoverParent, HoverPopover, Menu, TFile, TextFileView, ViewState, ViewStateResult, WorkspaceLeaf } from 'obsidian';
 
 import { Board } from './components/Board';
 import { StateManager } from './StateManager';
@@ -19,7 +19,8 @@ export class SwimlaneKanbanView extends TextFileView implements HoverParent {
   }
 
   get id(): string {
-    return `${(this.leaf as any).id}:::${this.file?.path}`;
+    // @ts-expect-error undocumented Obsidian API: WorkspaceLeaf.id
+    return `${this.leaf.id}:::${this.file?.path}`;
   }
 
   constructor(leaf: WorkspaceLeaf, plugin: SwimlaneKanbanPlugin) {
@@ -37,7 +38,7 @@ export class SwimlaneKanbanView extends TextFileView implements HoverParent {
   }
 
   getDisplayText() {
-    return this.file?.basename || 'Swimlane Kanban';
+    return this.file?.basename || 'Swimlane kanban';
   }
 
   getWindow() {
@@ -94,9 +95,10 @@ export class SwimlaneKanbanView extends TextFileView implements HoverParent {
 
   setViewData(data: string, clear?: boolean) {
     if (!hasFrontmatterKeyRaw(data)) {
-      this.plugin.swimlaneKanbanFileModes[(this.leaf as any).id || this.file.path] = 'markdown';
+      // @ts-expect-error undocumented Obsidian API: WorkspaceLeaf.id
+      this.plugin.swimlaneKanbanFileModes[this.leaf.id || this.file.path] = 'markdown';
       this.plugin.removeView(this);
-      this.plugin.setMarkdownView(this.leaf, false);
+      void this.plugin.setMarkdownView(this.leaf, false);
       return;
     }
 
@@ -107,7 +109,7 @@ export class SwimlaneKanbanView extends TextFileView implements HoverParent {
     this.plugin.addView(this, data, !clear && this.isPrimary);
   }
 
-  async setState(state: any, result: ViewStateResult): Promise<void> {
+  async setState(state: ViewState, result: ViewStateResult): Promise<void> {
     await super.setState(state, result);
   }
 
@@ -132,8 +134,9 @@ export class SwimlaneKanbanView extends TextFileView implements HoverParent {
         .setIcon('lucide-file-text')
         .setSection('pane')
         .onClick(() => {
-          this.plugin.swimlaneKanbanFileModes[(this.leaf as any).id || this.file.path] = 'markdown';
-          this.plugin.setMarkdownView(this.leaf);
+          // @ts-expect-error undocumented Obsidian API: WorkspaceLeaf.id
+          this.plugin.swimlaneKanbanFileModes[this.leaf.id || this.file.path] = 'markdown';
+          void this.plugin.setMarkdownView(this.leaf);
         });
     });
 

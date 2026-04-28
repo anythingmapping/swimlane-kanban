@@ -1877,4 +1877,27 @@
       transition: none !important;
     }
   }
+
+  // ── Modal utility classes ───────────────────────────────────────────────
+  &__modal-hint {
+    font-size: 0.85em;
+    opacity: 0.7;
+    margin-top: -0.5em;
+  }
+
+  &__modal-textarea {
+    width: 100%;
+    min-height: 140px;
+    font-family: monospace;
+    resize: vertical;
+  }
+
+  &__wikilink-suggest--hidden {
+    display: none;
+  }
+}
+
+// ── Body-level utility classes ──────────────────────────────────────────
+.swimlane-kanban--resizing {
+  user-select: none;
 }

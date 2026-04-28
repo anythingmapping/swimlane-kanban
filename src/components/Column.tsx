@@ -7,7 +7,7 @@ import { Sortable } from '../dnd/components/Sortable';
 import { SortPlaceholder } from '../dnd/components/SortPlaceholder';
 import { updateEntity } from '../dnd/util/data';
 import { EntityData } from '../dnd/types';
-import { Column as ColumnType, DataTypes, Item } from '../types';
+import { Board, Column as ColumnType, DataTypes, Item } from '../types';
 import { Card } from './Card';
 import { CardForm } from './CardForm';
 import { ColumnHeader } from './ColumnHeader';
@@ -63,18 +63,18 @@ export function Column({ column, columnIndex, swimlaneIndex }: ColumnProps) {
 
     const startX = e.clientX;
     const startWidth = measureRef.current?.getBoundingClientRect().width ?? 272;
-    document.body.style.userSelect = 'none';
+    document.body.classList.add('swimlane-kanban--resizing');
 
     const onMove = (ev: PointerEvent) => {
       const newWidth = Math.max(MIN_COLUMN_WIDTH, Math.round(startWidth + (ev.clientX - startX)));
       if (measureRef.current) {
-        measureRef.current.style.flex = `0 0 ${newWidth}px`;
-        measureRef.current.style.minWidth = `${newWidth}px`;
+        measureRef.current.style.setProperty('flex', `0 0 ${newWidth}px`);
+        measureRef.current.style.setProperty('min-width', `${newWidth}px`);
       }
     };
 
     const onUp = (ev: PointerEvent) => {
-      document.body.style.userSelect = '';
+      document.body.classList.remove('swimlane-kanban--resizing');
       target.removeEventListener('pointermove', onMove);
       target.removeEventListener('pointerup', onUp);
       const finalWidth = Math.max(MIN_COLUMN_WIDTH, Math.round(startWidth + (ev.clientX - startX)));
@@ -94,13 +94,13 @@ export function Column({ column, columnIndex, swimlaneIndex }: ColumnProps) {
 
   const handleClear = () => {
     setClearedItems(column.children);
-    stateManager.setState((board: any) => {
+    stateManager.setState((board: Board) => {
       return updateEntity(board, [swimlaneIndex, columnIndex], { children: { $set: [] } });
     });
   };
 
   const handleUnclear = () => {
-    stateManager.setState((board: any) => {
+    stateManager.setState((board: Board) => {
       return updateEntity(board, [swimlaneIndex, columnIndex], { children: { $set: clearedItems } });
     });
     setClearedItems([]);

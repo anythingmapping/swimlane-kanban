@@ -9,13 +9,15 @@ export async function sendToDailyNote(app: App, titles: string[], boardPath?: st
   }
 
   // Resolve daily note config
-  const dailyNotesPlugin = (app as any).internalPlugins?.plugins?.['daily-notes'];
+  // @ts-expect-error undocumented Obsidian API: App.internalPlugins
+  const dailyNotesPlugin = app.internalPlugins?.plugins?.['daily-notes'];
   const options = dailyNotesPlugin?.instance?.options || {};
   const folder: string = options.folder?.trim() || '';
   const format: string = options.format?.trim() || 'YYYY-MM-DD';
 
   // Build path using moment (globally available in Obsidian)
-  const dateStr = (window as any).moment().format(format);
+  // @ts-expect-error Obsidian exposes moment globally on window
+  const dateStr = window.moment().format(format);
   const filePath = folder ? `${folder}/${dateStr}.md` : `${dateStr}.md`;
 
   // Build board wiki-link so the daily note can trace back to the source board

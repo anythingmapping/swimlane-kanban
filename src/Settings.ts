@@ -16,7 +16,7 @@ export class SwimlaneKanbanSettingsTab extends PluginSettingTab {
     const { containerEl } = this;
     containerEl.empty();
 
-    new Setting(containerEl).setName('Swimlane Kanban').setHeading();
+    new Setting(containerEl).setName('General').setHeading();
 
     new Setting(containerEl)
       .setName('Theme')

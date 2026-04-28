@@ -1,5 +1,3 @@
-import { Path } from './dnd/types';
-
 // Re-export Nestable from dnd for convenience
 export type { Nestable, Path } from './dnd/types';
 
@@ -68,7 +66,7 @@ export const DataTypes = {
 export const ItemTemplate = {
   accepts: [DataTypes.Item],
   type: DataTypes.Item,
-  children: [] as any[],
+  children: [] as Item[],
 };
 
 export const ColumnTemplate = {

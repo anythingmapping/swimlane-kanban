@@ -1,3 +1,4 @@
+import { JSX } from 'preact';
 import { StateManager } from '../StateManager';
 import { SwimlaneKanbanView } from '../SwimlaneKanbanView';
 import { DndScope } from '../dnd/components/Scope';
@@ -58,7 +59,7 @@ export function Board({ stateManager, view }: BoardProps) {
       <DndScope id={view.id}>
         <div
           className={c('board') + ` swimlane-kanban--theme-${themeId}`}
-          style={{ '--column-width': `${columnWidth}px`, ...themeTokens } as any}
+          style={{ '--column-width': `${columnWidth}px`, ...themeTokens } as JSX.CSSProperties}
         >
           <div className={c('toolbar')}>
             <GoalForm />

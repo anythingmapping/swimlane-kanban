@@ -50,11 +50,6 @@ const STATUS_ICONS: Record<SprintStatus, string> = {
   'ended': '\u2014',
 };
 
-function padBar(filled: number, total: number): string {
-  const f = Math.round(filled * total);
-  return '\u2588'.repeat(f) + '\u2591'.repeat(total - f);
-}
-
 export function SprintHeader({ board }: SprintHeaderProps) {
   const sprint = board.data.sprint;
   if (!sprint || !sprint.startDate || !sprint.endDate) return null;
@@ -92,8 +87,6 @@ export function SprintHeader({ board }: SprintHeaderProps) {
   } else {
     rightLabel = `${daysRemaining} day${daysRemaining !== 1 ? 's' : ''} remaining`;
   }
-
-  const BAR_WIDTH = 28;
 
   return (
     <div className={`${c('sprint-header')} ${c('sprint-header--' + status)}`}>

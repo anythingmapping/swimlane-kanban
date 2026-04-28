@@ -1,5 +1,6 @@
-import { MarkdownRenderer, Menu, Notice, TFile } from 'obsidian';
-import { CSSProperties, useContext, useEffect, useMemo, useRef, useState } from 'preact/compat';
+import { MarkdownRenderer, Menu, MenuItem, Notice, TFile } from 'obsidian';
+import { JSX } from 'preact';
+import { useContext, useEffect, useMemo, useRef, useState } from 'preact/compat';
 
 import { Droppable } from '../dnd/components/Droppable';
 import { ScrollContainer } from '../dnd/components/ScrollContainer';
@@ -7,7 +8,7 @@ import { Sortable } from '../dnd/components/Sortable';
 import { SortPlaceholder } from '../dnd/components/SortPlaceholder';
 import { updateEntity, getEntityFromPath } from '../dnd/util/data';
 import { EntityData } from '../dnd/types';
-import { ColumnTemplate, DataTypes, Item, Swimlane as SwimlaneType, generateInstanceId } from '../types';
+import { Board as BoardType, ColumnTemplate, DataTypes, Item, Swimlane as SwimlaneType, generateInstanceId } from '../types';
 import { Column } from './Column';
 import { InputModal, TextareaModal } from './InputModal';
 import { SwimlaneKanbanContext } from './context';
@@ -77,8 +78,8 @@ export function Swimlane({ swimlane, swimlaneIndex }: SwimlaneProps) {
   useEffect(() => {
     if (isEditingDesc && textareaRef.current) {
       textareaRef.current.focus();
-      textareaRef.current.style.height = 'auto';
-      textareaRef.current.style.height = textareaRef.current.scrollHeight + 'px';
+      textareaRef.current.style.setProperty('height', 'auto');
+      textareaRef.current.style.setProperty('height', textareaRef.current.scrollHeight + 'px');
     }
   }, [isEditingDesc]);
 
@@ -87,7 +88,7 @@ export function Swimlane({ swimlane, swimlaneIndex }: SwimlaneProps) {
     setWlSuggestions([]);
     const trimmed = editDesc.trim();
     if (trimmed !== (swimlane.data.description || '')) {
-      stateManager.setState((board: any) =>
+      stateManager.setState((board: BoardType) =>
         updateEntity(board, [swimlaneIndex], {
           data: { $merge: { description: trimmed || undefined } },
         })
@@ -146,20 +147,20 @@ export function Swimlane({ swimlane, swimlaneIndex }: SwimlaneProps) {
       if (!t) return;
       t.focus();
       t.setSelectionRange(newCursor, newCursor);
-      t.style.height = 'auto';
-      t.style.height = t.scrollHeight + 'px';
+      t.style.setProperty('height', 'auto');
+      t.style.setProperty('height', t.scrollHeight + 'px');
     });
   };
 
   const hasAnyCards = swimlane.children.some(col => col.children.length > 0);
-  const [clearedSnapshot, setClearedSnapshot] = useState<{ colIndex: number; items: any[] }[]>([]);
+  const [clearedSnapshot, setClearedSnapshot] = useState<{ colIndex: number; items: Item[] }[]>([]);
 
   const handleClear = () => {
     const snapshot = swimlane.children
       .map((col, colIndex) => ({ colIndex, items: col.children }))
       .filter(({ items }) => items.length > 0);
     setClearedSnapshot(snapshot);
-    stateManager.setState((board: any) => {
+    stateManager.setState((board: BoardType) => {
       let updated = board;
       snapshot.forEach(({ colIndex }) => {
         updated = updateEntity(updated, [swimlaneIndex, colIndex], { children: { $set: [] } });
@@ -169,7 +170,7 @@ export function Swimlane({ swimlane, swimlaneIndex }: SwimlaneProps) {
   };
 
   const handleUnclear = () => {
-    stateManager.setState((board: any) => {
+    stateManager.setState((board: BoardType) => {
       let updated = board;
       clearedSnapshot.forEach(({ colIndex, items }) => {
         updated = updateEntity(updated, [swimlaneIndex, colIndex], { children: { $set: items } });
@@ -204,7 +205,7 @@ export function Swimlane({ swimlane, swimlaneIndex }: SwimlaneProps) {
         data: { title, checked: false, priority },
       };
     });
-    stateManager.setState((board: any) =>
+    stateManager.setState((board: BoardType) =>
       updateEntity(board, [swimlaneIndex, 0], {
         children: { $push: newItems },
       })
@@ -213,8 +214,8 @@ export function Swimlane({ swimlane, swimlaneIndex }: SwimlaneProps) {
 
   const handleDescInput = (e: Event) => {
     const ta = e.target as HTMLTextAreaElement;
-    ta.style.height = 'auto';
-    ta.style.height = ta.scrollHeight + 'px';
+    ta.style.setProperty('height', 'auto');
+    ta.style.setProperty('height', ta.scrollHeight + 'px');
     setEditDesc(ta.value);
     updateWlSuggestions(ta);
   };
@@ -320,7 +321,7 @@ export function Swimlane({ swimlane, swimlaneIndex }: SwimlaneProps) {
             swimlane.data.title,
             (newTitle) => {
               if (!newTitle?.trim()) return;
-              stateManager.setState((board: any) =>
+              stateManager.setState((board: BoardType) =>
                 updateEntity(board, [swimlaneIndex], {
                   data: { $merge: { title: newTitle.trim() } },
                 })
@@ -348,7 +349,7 @@ export function Swimlane({ swimlane, swimlaneIndex }: SwimlaneProps) {
     ];
 
     const setColour = (color: string | undefined) => {
-      stateManager.setState((board: any) =>
+      stateManager.setState((board: BoardType) =>
         updateEntity(board, [swimlaneIndex], {
           data: { $merge: { color } },
         })
@@ -356,10 +357,11 @@ export function Swimlane({ swimlane, swimlaneIndex }: SwimlaneProps) {
     };
 
     menu.addItem((item) => {
-      const sub = (item as any).setSubmenu();
+      // @ts-expect-error undocumented Obsidian API: MenuItem.setSubmenu
+      const sub = item.setSubmenu();
       item.setTitle('Set colour').setIcon('lucide-palette');
       for (const opt of colourOptions) {
-        sub.addItem((si: any) => {
+        sub.addItem((si: MenuItem) => {
           const label = swimlane.data.color === opt.name
             ? `● ${opt.name}`
             : `○ ${opt.name}`;
@@ -367,7 +369,7 @@ export function Swimlane({ swimlane, swimlaneIndex }: SwimlaneProps) {
         });
       }
       sub.addSeparator();
-      sub.addItem((si: any) => {
+      sub.addItem((si: MenuItem) => {
         si.setTitle('Clear colour').setIcon('lucide-x-circle').onClick(() => setColour(undefined));
       });
     });
@@ -385,7 +387,7 @@ export function Swimlane({ swimlane, swimlaneIndex }: SwimlaneProps) {
             (val) => {
               if (val === null) return;
               const tasks = val.split('\n').map(t => t.trim()).filter(t => t.length > 0);
-              stateManager.setState((board: any) =>
+              stateManager.setState((board: BoardType) =>
                 updateEntity(board, [swimlaneIndex], {
                   data: { $merge: { scaffold: tasks.length > 0 ? tasks : undefined } },
                 })
@@ -405,10 +407,10 @@ export function Swimlane({ swimlane, swimlaneIndex }: SwimlaneProps) {
         .setTitle('Clear all cards')
         .setIcon('lucide-eraser')
         .onClick(() => {
-          stateManager.setState((board: any) => {
+          stateManager.setState((board: BoardType) => {
             const swimlane = getEntityFromPath(board, [swimlaneIndex]);
             let updated = board;
-            swimlane.children.forEach((_: any, colIndex: number) => {
+            swimlane.children.forEach((_: unknown, colIndex: number) => {
               updated = updateEntity(updated, [swimlaneIndex, colIndex], { children: { $set: [] } });
             });
             return updated;
@@ -453,7 +455,7 @@ export function Swimlane({ swimlane, swimlaneIndex }: SwimlaneProps) {
           : CUSTOM_COLORS[swimlane.data.color]
             ? CUSTOM_COLORS[swimlane.data.color]
             : `var(--color-${swimlane.data.color})`,
-      } as CSSProperties)
+      } as JSX.CSSProperties)
     : undefined;
 
   return (

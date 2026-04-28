@@ -95,9 +95,7 @@ export class TextareaModal extends Modal {
     contentEl.createEl('p', { text: this.promptText });
     if (this.hint) {
       const hintEl = contentEl.createEl('p', { text: this.hint });
-      hintEl.style.fontSize = '0.85em';
-      hintEl.style.opacity = '0.7';
-      hintEl.style.marginTop = '-0.5em';
+      hintEl.addClass('swimlane-kanban__modal-hint');
     }
 
     // Wrapper for textarea + suggest dropdown
@@ -107,15 +105,11 @@ export class TextareaModal extends Modal {
     ta.setValue(this.defaultValue).onChange((value) => {
       this.result = value;
     });
-    ta.inputEl.style.width = '100%';
-    ta.inputEl.style.minHeight = '140px';
-    ta.inputEl.style.fontFamily = 'monospace';
-    ta.inputEl.style.resize = 'vertical';
+    ta.inputEl.addClass('swimlane-kanban__modal-textarea');
     if (this.placeholder) ta.inputEl.placeholder = this.placeholder;
 
     // Suggest dropdown container
-    this.suggestEl = wrap.createDiv({ cls: 'swimlane-kanban__wikilink-suggest' });
-    this.suggestEl.style.display = 'none';
+    this.suggestEl = wrap.createDiv({ cls: 'swimlane-kanban__wikilink-suggest swimlane-kanban__wikilink-suggest--hidden' });
 
     ta.inputEl.addEventListener('input', () => this.updateSuggestions(ta.inputEl));
     ta.inputEl.addEventListener('click', () => this.updateSuggestions(ta.inputEl));
@@ -198,7 +192,7 @@ export class TextareaModal extends Modal {
 
   private renderSuggestions(_el: HTMLTextAreaElement) {
     if (!this.suggestEl) return;
-    this.suggestEl.style.display = '';
+    this.suggestEl.removeClass('swimlane-kanban__wikilink-suggest--hidden');
     this.suggestEl.empty();
 
     const list = this.suggestEl.createDiv({ cls: 'swimlane-kanban__wikilink-suggest-list' });
@@ -246,7 +240,7 @@ export class TextareaModal extends Modal {
     this.suggestions = [];
     this.suggestIndex = 0;
     if (this.suggestEl) {
-      this.suggestEl.style.display = 'none';
+      this.suggestEl.addClass('swimlane-kanban__wikilink-suggest--hidden');
       this.suggestEl.empty();
     }
   }
